@@ -11,8 +11,8 @@
 (() => {
   'use strict';
 
-  const APP_KEY = 'hockeyWorldCup27SaveV3';
-  const APP_VERSION = '3.0.0';
+  const APP_KEY = 'hockeyWorldCup27SaveV5';
+  const APP_VERSION = '5.0.0';
   const WEEKLY_RESET_KEY = 'hockeyWorldCup27WeeklyResetV1';
   const LEGACY_KEYS = ['hockeyWorldCup27SaveV3','hockeyWorldCup27SaveV2','hockeyWorldCup27SaveV1','streetKingsSaveV15','streetKingsSaveV14','streetKingsSaveV13','streetKingsSaveV12','streetKingsSaveV11','streetKingsSaveV10','streetKingsSaveV9','streetKingsSaveV8','streetKingsSaveV7','streetKingsSaveV6','streetKingsSaveV5','streetKingsSaveV4','streetKingsSaveV3','streetKingsSaveV2','streetKingsSave'];
   const $ = (s, r = document) => r.querySelector(s);
@@ -959,13 +959,7 @@ const EXTRA_NAME_POOLS = {"Afghanistan":[["Breanna","Denise","Randy","Kevin","Br
       const typ=el.dataset.startMatchType||'league';
       const g=findGame(el.dataset.startMatch,typ);
       if(!g){ toast('Spiel nicht gefunden','Die Partie konnte nicht geladen werden.'); return; }
-      try{
-        if(typ==='league') prepareLeagueMatchday(g);
-        startLiveMatch(g,typ);
-      }catch(err){
-        console.error('Start Match Fehler:',err);
-        toast('Spiel konnte nicht starten','Bitte erneut auf SPIEL STARTEN tippen.');
-      }
+      launchLiveMatch(g,typ);
     }));
     $$('[data-simulate]').forEach(el=>activate(el,()=>simulateButton()));
     $$('[data-close],.close-btn').forEach(el=>activate(el,()=>closeModal()));
@@ -1034,12 +1028,9 @@ const EXTRA_NAME_POOLS = {"Afghanistan":[["Breanna","Denise","Randy","Kevin","Br
   function simulateButton(){
     if(state.liveMatch)return;
     const leagueGame=nextUserGame();
-    if(leagueGame){
-      prepareLeagueMatchday(leagueGame);
-      startLiveMatch(leagueGame,'league');
-      return;
-    }
-    const friendly=state.friendlies.find(g=>!g.played); if(friendly){startLiveMatch(friendly,'friendly');return;}
+    if(leagueGame){ launchLiveMatch(leagueGame,'league'); return; }
+    const friendly=state.friendlies.find(g=>!g.played);
+    if(friendly){ launchLiveMatch(friendly,'friendly'); return; }
     finishSeason();
   }
 
@@ -1091,14 +1082,47 @@ const EXTRA_NAME_POOLS = {"Afghanistan":[["Breanna","Denise","Randy","Kevin","Br
 
   const PERIOD_MS=60000, PERIOD_BREAK_MS=3000, TOTAL_MATCH_MS=PERIOD_MS*3+PERIOD_BREAK_MS*2;
 
+  function launchLiveMatch(game,type='league'){
+    if(state.liveMatch){
+      toast('Live-Spiel läuft bereits','Die aktuelle Partie ist noch aktiv.');
+      return;
+    }
+    if(!game || !game.id){
+      toast('Kein Spiel gewählt','Bitte wähle zuerst eine Partie aus.');
+      return;
+    }
+    const H=state.teams?.[game.home], A=state.teams?.[game.away];
+    if(!H || !A){
+      toast('Spiel konnte nicht geladen werden','Heim- oder Auswärtsteam fehlt.');
+      return;
+    }
+    try{
+      closeModal();
+    }catch(_){ }
+    setTimeout(()=>{
+      try{
+        if(type==='league') prepareLeagueMatchday(game);
+        startLiveMatch(game,type);
+      }catch(err){
+        console.error('Live-Spiel Startfehler:',err);
+        state.liveMatch=null;
+        saveState();
+        toast('Live-Spiel konnte nicht starten','Bitte erneut versuchen.');
+      }
+    },60);
+  }
+
   function openPreMatch(game,type){
     const H=state.teams[game.home],A=state.teams[game.away];if(!H||!A)return;const weather=pick(WEATHER),hs=Math.round(teamStrength(H)*(H.id===state.userTeamId?1.05:1)),as=Math.round(teamStrength(A));
     openModal('SPIELVORDEREITUNG',`<div class="pregame-card"><div class="pregame-cover"><img src="assets/screens/hockey-world-cup-27.jpg" alt="EISHOCKEY WORLD CUP 27"><span>EISHOCKEY WORLD CUP 27 · MATCHDAY</span></div><div class="pregame-teams"><div><img class="club-crest" src="${crest(H)}"><strong>${esc(H.name)}</strong><small>HEIM</small><b>${hs} OVR</b></div><span>VS</span><div><img class="club-crest" src="${crest(A)}"><strong>${esc(A.name)}</strong><small>AUSWÄRTS</small><b>${as} OVR</b></div></div><div class="pregame-stats"><span>🌤️ ${weather.icon} ${weather.name}</span><span>🏟️ ${esc(game.home===H.id?H.stadium.name:A.stadium.name)}</span><span>📅 ${dateDE(state.date)} · 18:00</span></div><div class="pregame-form"><div><b>FORM</b><span>${(H.form||[]).slice(-5).join(' ')}</span></div><div><b>FORM</b><span>${(A.form||[]).slice(-5).join(' ')}</span></div></div><button class="gold-btn wide" data-start-match="${game.id}" data-start-match-type="${type}">SPIEL STARTEN · 3:00</button><p class="modal-copy">Die Partie wird live simuliert. Alle anderen Spiele des Spieltags werden jetzt zuerst automatisch simuliert und erscheinen kurz vor dem Bully.</p></div>`,{kicker:'MATCHDAY'});
   }
 
   function startLiveMatch(game,type){
+    if(state.liveMatch)return;
+    const H=state.teams?.[game?.home], A=state.teams?.[game?.away];
+    if(!H||!A)throw new Error('Teams der Partie fehlen');
     if(type==='league') prepareLeagueMatchday(game);
-    const H=state.teams[game.home], A=state.teams[game.away], weather=pick(WEATHER); if(!H||!A)return;
+    const weather=pick(WEATHER);
     state.liveMatch={
       gameId:game.id,type,home:H.id,away:A.id,hg:0,ag:0,weather,
       started:performance.now(),elapsed:0,matchClock:0,phase:'first',period:1,breakShown:{},
@@ -1863,7 +1887,7 @@ const EXTRA_NAME_POOLS = {"Afghanistan":[["Breanna","Denise","Randy","Kevin","Br
       const typ=el.dataset.startMatchType||'league';
       const g=findGame(el.dataset.startMatch,typ);
       if(!g){toast('Spiel nicht gefunden','Die Partie konnte nicht geladen werden.');return;}
-      try{if(typ==='league')prepareLeagueMatchday(g);startLiveMatch(g,typ);}catch(err){console.error('Start Match Fehler:',err);toast('Spiel konnte nicht starten','Technischer Fehler beim Start.');}
+      launchLiveMatch(g,typ);
     }
     else if(el.dataset.calendarLeague){state.calendarLeague=el.dataset.calendarLeague;renderPage();}
     else if(el.dataset.repayCredit)repayCredit();
