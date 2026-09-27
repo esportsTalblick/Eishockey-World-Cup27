@@ -11,10 +11,10 @@
 (() => {
   'use strict';
 
-  const APP_KEY = 'hockeyWorldCup27SaveV2';
-  const APP_VERSION = '2.0.0';
+  const APP_KEY = 'hockeyWorldCup27SaveV3';
+  const APP_VERSION = '3.0.0';
   const WEEKLY_RESET_KEY = 'hockeyWorldCup27WeeklyResetV1';
-  const LEGACY_KEYS = ['hockeyWorldCup27SaveV2','hockeyWorldCup27SaveV1','streetKingsSaveV15','streetKingsSaveV14','streetKingsSaveV13','streetKingsSaveV12','streetKingsSaveV11','streetKingsSaveV10','streetKingsSaveV9','streetKingsSaveV8','streetKingsSaveV7','streetKingsSaveV6','streetKingsSaveV5','streetKingsSaveV4','streetKingsSaveV3','streetKingsSaveV2','streetKingsSave'];
+  const LEGACY_KEYS = ['hockeyWorldCup27SaveV3','hockeyWorldCup27SaveV2','hockeyWorldCup27SaveV1','streetKingsSaveV15','streetKingsSaveV14','streetKingsSaveV13','streetKingsSaveV12','streetKingsSaveV11','streetKingsSaveV10','streetKingsSaveV9','streetKingsSaveV8','streetKingsSaveV7','streetKingsSaveV6','streetKingsSaveV5','streetKingsSaveV4','streetKingsSaveV3','streetKingsSaveV2','streetKingsSave'];
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
@@ -105,6 +105,15 @@
     ['Kazakhstan','Astana','Kasachstan','🇰🇿'],['Poland','Warsaw','Polen','🇵🇱'],['Hungary','Budapest','Ungarn','🇭🇺'],['Great Britain','London','Großbritannien','🇬🇧'],
     ['Netherlands','Amsterdam','Niederlande','🇳🇱'],['Japan','Tokyo','Japan','🇯🇵'],['South Korea','Seoul','Südkorea','🇰🇷'],['Australia','Melbourne','Australien','🇦🇺']
   ];
+const ALL_COUNTRIES = [{"iso":"AF","name":"Afghanistan"},{"iso":"AL","name":"Albanien"},{"iso":"DZ","name":"Algerien"},{"iso":"AS","name":"Amerikanisch-Samoa"},{"iso":"VI","name":"Amerikanische Jungferninseln"},{"iso":"UM","name":"Amerikanische Überseeinseln"},{"iso":"AD","name":"Andorra"},{"iso":"AO","name":"Angola"},{"iso":"AI","name":"Anguilla"},{"iso":"AQ","name":"Antarktis"},{"iso":"AG","name":"Antigua und Barbuda"},{"iso":"AR","name":"Argentinien"},{"iso":"AM","name":"Armenien"},{"iso":"AW","name":"Aruba"},{"iso":"AZ","name":"Aserbaidschan"},{"iso":"AU","name":"Australien"},{"iso":"BS","name":"Bahamas"},{"iso":"BH","name":"Bahrain"},{"iso":"BD","name":"Bangladesch"},{"iso":"BB","name":"Barbados"},{"iso":"BY","name":"Belarus"},{"iso":"BE","name":"Belgien"},{"iso":"BZ","name":"Belize"},{"iso":"BJ","name":"Benin"},{"iso":"BM","name":"Bermuda"},{"iso":"BT","name":"Bhutan"},{"iso":"BO","name":"Bolivien"},{"iso":"BA","name":"Bosnien und Herzegowina"},{"iso":"BW","name":"Botsuana"},{"iso":"BV","name":"Bouvetinsel"},{"iso":"BR","name":"Brasilien"},{"iso":"VG","name":"Britische Jungferninseln"},{"iso":"IO","name":"Britisches Territorium im Indischen Ozean"},{"iso":"BN","name":"Brunei Darussalam"},{"iso":"BG","name":"Bulgarien"},{"iso":"BF","name":"Burkina Faso"},{"iso":"BI","name":"Burundi"},{"iso":"CV","name":"Cabo Verde"},{"iso":"CL","name":"Chile"},{"iso":"CN","name":"China"},{"iso":"CK","name":"Cookinseln"},{"iso":"CR","name":"Costa Rica"},{"iso":"CW","name":"Curaçao"},{"iso":"DE","name":"Deutschland"},{"iso":"DM","name":"Dominica"},{"iso":"DO","name":"Dominikanische Republik"},{"iso":"DJ","name":"Dschibuti"},{"iso":"DK","name":"Dänemark"},{"iso":"EC","name":"Ecuador"},{"iso":"SV","name":"El Salvador"},{"iso":"CI","name":"Elfenbeinküste"},{"iso":"ER","name":"Eritrea"},{"iso":"EE","name":"Estland"},{"iso":"SZ","name":"Eswatini"},{"iso":"FK","name":"Falklandinseln"},{"iso":"FJ","name":"Fidschi"},{"iso":"FI","name":"Finnland"},{"iso":"FR","name":"Frankreich"},{"iso":"GF","name":"Französisch-Guayana"},{"iso":"PF","name":"Französisch-Polynesien"},{"iso":"TF","name":"Französische Süd- und Antarktisgebiete"},{"iso":"FO","name":"Färöer"},{"iso":"GA","name":"Gabun"},{"iso":"GM","name":"Gambia"},{"iso":"GE","name":"Georgien"},{"iso":"GH","name":"Ghana"},{"iso":"GI","name":"Gibraltar"},{"iso":"GD","name":"Grenada"},{"iso":"GR","name":"Griechenland"},{"iso":"GB","name":"Großbritannien"},{"iso":"GL","name":"Grönland"},{"iso":"GP","name":"Guadeloupe"},{"iso":"GU","name":"Guam"},{"iso":"GT","name":"Guatemala"},{"iso":"GG","name":"Guernsey"},{"iso":"GN","name":"Guinea"},{"iso":"GW","name":"Guinea-Bissau"},{"iso":"GY","name":"Guyana"},{"iso":"HT","name":"Haiti"},{"iso":"HM","name":"Heard und McDonaldinseln"},{"iso":"HN","name":"Honduras"},{"iso":"HK","name":"Hongkong"},{"iso":"IN","name":"Indien"},{"iso":"ID","name":"Indonesien"},{"iso":"IQ","name":"Irak"},{"iso":"IR","name":"Iran"},{"iso":"IE","name":"Irland"},{"iso":"IS","name":"Island"},{"iso":"IM","name":"Isle of Man"},{"iso":"IL","name":"Israel"},{"iso":"IT","name":"Italien"},{"iso":"JM","name":"Jamaika"},{"iso":"JP","name":"Japan"},{"iso":"YE","name":"Jemen"},{"iso":"JE","name":"Jersey"},{"iso":"JO","name":"Jordanien"},{"iso":"KY","name":"Kaimaninseln"},{"iso":"KH","name":"Kambodscha"},{"iso":"CM","name":"Kamerun"},{"iso":"CA","name":"Kanada"},{"iso":"BQ","name":"Karibische Niederlande"},{"iso":"KZ","name":"Kasachstan"},{"iso":"QA","name":"Katar"},{"iso":"KE","name":"Kenia"},{"iso":"KG","name":"Kirgisistan"},{"iso":"KI","name":"Kiribati"},{"iso":"CC","name":"Kokosinseln"},{"iso":"CO","name":"Kolumbien"},{"iso":"KM","name":"Komoren"},{"iso":"CG","name":"Kongo-Brazzaville"},{"iso":"CD","name":"Kongo-Kinshasa"},{"iso":"HR","name":"Kroatien"},{"iso":"CU","name":"Kuba"},{"iso":"KW","name":"Kuwait"},{"iso":"LA","name":"Laos"},{"iso":"LS","name":"Lesotho"},{"iso":"LV","name":"Lettland"},{"iso":"LB","name":"Libanon"},{"iso":"LR","name":"Liberia"},{"iso":"LY","name":"Libyen"},{"iso":"LI","name":"Liechtenstein"},{"iso":"LT","name":"Litauen"},{"iso":"LU","name":"Luxemburg"},{"iso":"MG","name":"Madagaskar"},{"iso":"MW","name":"Malawi"},{"iso":"MY","name":"Malaysia"},{"iso":"MV","name":"Malediven"},{"iso":"ML","name":"Mali"},{"iso":"MT","name":"Malta"},{"iso":"MA","name":"Marokko"},{"iso":"MH","name":"Marshallinseln"},{"iso":"MQ","name":"Martinique"},{"iso":"MR","name":"Mauretanien"},{"iso":"MU","name":"Mauritius"},{"iso":"YT","name":"Mayotte"},{"iso":"MX","name":"Mexiko"},{"iso":"FM","name":"Mikronesien"},{"iso":"MD","name":"Moldau"},{"iso":"MC","name":"Monaco"},{"iso":"MN","name":"Mongolei"},{"iso":"ME","name":"Montenegro"},{"iso":"MS","name":"Montserrat"},{"iso":"MZ","name":"Mosambik"},{"iso":"MM","name":"Myanmar"},{"iso":"NA","name":"Namibia"},{"iso":"NR","name":"Nauru"},{"iso":"NP","name":"Nepal"},{"iso":"NC","name":"Neukaledonien"},{"iso":"NZ","name":"Neuseeland"},{"iso":"NI","name":"Nicaragua"},{"iso":"NL","name":"Niederlande"},{"iso":"NE","name":"Niger"},{"iso":"NG","name":"Nigeria"},{"iso":"NU","name":"Niue"},{"iso":"KP","name":"Nordkorea"},{"iso":"MK","name":"Nordmazedonien"},{"iso":"NF","name":"Norfolkinsel"},{"iso":"NO","name":"Norwegen"},{"iso":"MP","name":"Nördliche Marianen"},{"iso":"OM","name":"Oman"},{"iso":"PK","name":"Pakistan"},{"iso":"PW","name":"Palau"},{"iso":"PS","name":"Palästinensische Autonomiegebiete"},{"iso":"PA","name":"Panama"},{"iso":"PG","name":"Papua-Neuguinea"},{"iso":"PY","name":"Paraguay"},{"iso":"PE","name":"Peru"},{"iso":"PH","name":"Philippinen"},{"iso":"PN","name":"Pitcairninseln"},{"iso":"PL","name":"Polen"},{"iso":"PT","name":"Portugal"},{"iso":"PR","name":"Puerto Rico"},{"iso":"RW","name":"Ruanda"},{"iso":"RO","name":"Rumänien"},{"iso":"RU","name":"Russland"},{"iso":"RE","name":"Réunion"},{"iso":"SB","name":"Salomonen"},{"iso":"ZM","name":"Sambia"},{"iso":"WS","name":"Samoa"},{"iso":"SM","name":"San Marino"},{"iso":"SA","name":"Saudi-Arabien"},{"iso":"SE","name":"Schweden"},{"iso":"CH","name":"Schweiz"},{"iso":"SN","name":"Senegal"},{"iso":"RS","name":"Serbien"},{"iso":"SC","name":"Seychellen"},{"iso":"SL","name":"Sierra Leone"},{"iso":"ZW","name":"Simbabwe"},{"iso":"SG","name":"Singapur"},{"iso":"SX","name":"Sint Maarten"},{"iso":"SK","name":"Slowakei"},{"iso":"SI","name":"Slowenien"},{"iso":"SO","name":"Somalia"},{"iso":"MO","name":"Sonderverwaltungsregion Macau"},{"iso":"ES","name":"Spanien"},{"iso":"SJ","name":"Spitzbergen und Jan Mayen"},{"iso":"LK","name":"Sri Lanka"},{"iso":"BL","name":"St. Barthélemy"},{"iso":"SH","name":"St. Helena"},{"iso":"KN","name":"St. Kitts und Nevis"},{"iso":"LC","name":"St. Lucia"},{"iso":"MF","name":"St. Martin"},{"iso":"PM","name":"St. Pierre und Miquelon"},{"iso":"VC","name":"St. Vincent und die Grenadinen"},{"iso":"SD","name":"Sudan"},{"iso":"SR","name":"Suriname"},{"iso":"SY","name":"Syrien"},{"iso":"ST","name":"São Tomé und Príncipe"},{"iso":"ZA","name":"Südafrika"},{"iso":"GS","name":"Südgeorgien und die Südlichen Sandwichinseln"},{"iso":"KR","name":"Südkorea"},{"iso":"SS","name":"Südsudan"},{"iso":"TJ","name":"Tadschikistan"},{"iso":"TW","name":"Taiwan"},{"iso":"TZ","name":"Tansania"},{"iso":"TH","name":"Thailand"},{"iso":"TL","name":"Timor-Leste"},{"iso":"TG","name":"Togo"},{"iso":"TK","name":"Tokelau"},{"iso":"TO","name":"Tonga"},{"iso":"TT","name":"Trinidad und Tobago"},{"iso":"TD","name":"Tschad"},{"iso":"CZ","name":"Tschechien"},{"iso":"TN","name":"Tunesien"},{"iso":"TM","name":"Turkmenistan"},{"iso":"TC","name":"Turks- und Caicosinseln"},{"iso":"TV","name":"Tuvalu"},{"iso":"TR","name":"Türkei"},{"iso":"US","name":"USA"},{"iso":"UG","name":"Uganda"},{"iso":"UA","name":"Ukraine"},{"iso":"HU","name":"Ungarn"},{"iso":"UY","name":"Uruguay"},{"iso":"UZ","name":"Usbekistan"},{"iso":"VU","name":"Vanuatu"},{"iso":"VA","name":"Vatikanstadt"},{"iso":"VE","name":"Venezuela"},{"iso":"AE","name":"Vereinigte Arabische Emirate"},{"iso":"VN","name":"Vietnam"},{"iso":"WF","name":"Wallis und Futuna"},{"iso":"CX","name":"Weihnachtsinsel"},{"iso":"EH","name":"Westsahara"},{"iso":"CF","name":"Zentralafrikanische Republik"},{"iso":"CY","name":"Zypern"},{"iso":"EG","name":"Ägypten"},{"iso":"GQ","name":"Äquatorialguinea"},{"iso":"ET","name":"Äthiopien"},{"iso":"AX","name":"Ålandinseln"},{"iso":"AT","name":"Österreich"}];
+const COUNTRY_QUALITY = {"CA":90,"US":88,"SE":86,"FI":85,"RU":84,"CZ":84,"CH":80,"SK":79,"DE":79,"UA":68,"BY":69,"LV":74,"DK":73,"NO":72,"KZ":72,"FR":70,"AT":70,"GB":69,"PL":68,"SI":67,"HR":67,"IT":66,"AU":66,"NL":65,"JP":65,"KR":64,"HU":64,"RO":63,"EE":62,"LT":61};
+const EXTRA_NAME_POOLS = {"Afghanistan":[["Breanna","Denise","Randy","Kevin","Brooke","Cindy"],["Frazier","Willis","Patel","Garrison","Olson","Warner"]],"Albanien":[["Timothy","Charles","Richard","Carol","Caitlyn","Jason"],["Martinez","Long","Gonzalez","Hill","Jackson","Zuniga"]],"Algerien":[["Elizabeth","Evan","Samuel","Wesley","Nancy","William"],["Green","Banks","Moore","Bradford","Phillips","Davidson"]],"Amerikanisch-Samoa":[["Tyler","Isabella","Todd","Scott","Tina","Kaitlyn"],["Scott","Brown","Valdez","Martinez","Carter","Mclaughlin"]],"Amerikanische Jungferninseln":[["Margaret","Thomas","Elizabeth","Paul","Michelle"],["Powell","Reed","Harrison","Lara","Williams","Wise"]],"Amerikanische Überseeinseln":[["Robin","Amy","Jennifer","Chelsea","Jared","Bobby"],["King","Barker","Caldwell","Foster","Clay","Farley"]],"Andorra":[["Jason","Jose","Stephanie","Jeremiah","Robert","Bonnie"],["Sanchez","Mendoza","Bailey","Griffin","Hancock","Patterson"]],"Angola":[["Michael","Derek","Emma","Jose","Helen","Alexandria"],["Ball","Williams","Romero","Rodriguez","Holland","Miller"]],"Anguilla":[["Nicholas","Kendra","Daniel","Samuel","Bryan","Aaron"],["Ellison","Maynard","Foster","Raymond","Hanna","Pratt"]],"Antarktis":[["Russell","John","Adam","Molly","David","Patricia"],["Armstrong","Donaldson","Smith","Faulkner","Moore","Norman"]],"Antigua und Barbuda":[["Caitlyn","James","Jennifer","John","Emma","Justin"],["Chambers","Clark","Bryant","Rosales","Hodges","Phillips"]],"Argentinien":[["Lorenzo","Guadalupe","Alma","Santino","Felipe","Maria Luz"],["Ramirez","Escobar","Gutierrez","Perez","Rojas"]],"Armenien":[["Գեղամ","Նինա","Բարբարա","Արշակ","Լիլիթ","Նարինե"],["Ազգալդյան","Մշեցյան","Ճոճկանյան","Ղալթախչյան","Սարոյան","Տաճատյան"]],"Aruba":[["Emily","Stephanie","Warren","Carol","Thomas"],["Orozco","Harris","Butler","Murphy","Clark","Cox"]],"Aserbaidschan":[["Əcəbnaz","Kəmalə","Yadigar","Vüsalə","Qumru","Gülmira"],["Cəfərzadə","Fikrətoğlu","Əsgəroğlu","Əmirli","Sədalı","Vəlizadə"]],"Australien":[["Robert","Sarah","Donald","Rebecca","John","Thomas"],["Clarke","Harrington","Avery","Hernandez","Richardson","Scott"]],"Bahamas":[["Brian","Elizabeth","Beth","Nathan","Rachel","Amber"],["Wallace","Henry","Blackburn","Jordan","Carrillo","Woodard"]],"Bahrain":[["William","Taylor","Kirk","Bradley","Dennis","Anthony"],["Jones","Stewart","Sullivan","Stanley","Hamilton","Martin"]],"Bangladesch":[["Katie","Tiffany","Ruth","Joseph","Jennifer"],["Abbott","Holmes","Moody","Benton","Martin","Perez"]],"Barbados":[["Caitlin","Toni","Nicholas","Ryan","Ricky","Carol"],["Peterson","Weber","Kim","Woods","Higgins","Rios"]],"Belarus":[["Lori","Kevin","Benjamin","Alexandria","Darren","Stacey"],["Gonzales","Cooper","Dixon","Jones","Lee","Baker"]],"Belgien":[["Maurizio","Marc","Tom","Michaël","Francine","Jocelyne"],["Collignon","Georges","Lejeune","Reuter","Duez"]],"Belize":[["Christopher","Alexis","Juan","Marie","Evelyn","Frank"],["Velazquez","Harper","Daniels","Orr","Ramirez","Thompson"]],"Benin":[["Zachary","Cameron","Randy","Courtney","Leah","Steven"],["Owens","Friedman","Thompson","Cross","Martinez","Pearson"]],"Bermuda":[["Joshua","Maria","Katherine","Amy","Alyssa","Ryan"],["Lewis","English","Gardner","Ramirez","Watson","Porter"]],"Bhutan":[["Kyle","Richard","Lisa","Eric","Joshua","Rebecca"],["Peters","Fuller","Sandoval","Schwartz","King","Curtis"]],"Bolivien":[["Rachel","Thomas","Stephen","Donald","Katherine","Michael"],["Ryan","Porter","Walker","Johnson","Singh"]],"Bosnien und Herzegowina":[["Brenda","Jonathan","Paula","David","Jamie","Nancy"],["Johnson","Brown","Jordan","Murray","Gonzalez"]],"Botsuana":[["Heather","David","Kristin","Krystal","Laura","Joe"],["Barton","Hart","Crawford","Maynard","Alexander","Tate"]],"Bouvetinsel":[["Daniel","Kim","Adrian","Jessica","Debbie","Misty"],["Sanchez","Allison","Mitchell","Adams","Callahan","Allen"]],"Brasilien":[["Davi Miguel","Ana Julia","Lucas","Cauã","Vinícius","Bryan"],["Vieira","Teixeira","Correia","Rezende","Farias","Sales"]],"Britische Jungferninseln":[["Tracey","Gerald","Zachary","Lance","Holly","Lauren"],["Villa","Martin","Moore","Hill","Ross","Wright"]],"Britisches Territorium im Indischen Ozean":[["Jennifer","Eduardo","Robert","Anthony","Michele","Krystal"],["Benson","Thompson","Mercado","Smith","Yoder","Williams"]],"Brunei Darussalam":[["David","Claudia","Monique","Nicole","Adam","Deborah"],["Pena","Perez","Barr","Mccormick","Clark","Taylor"]],"Bulgarien":[["Спасияна","Деслав","Яначко","Емануила","Йоанна","Светломир"],["Бобев","Николов","Парашкевов","Бърборков","Колев","Дачев"]],"Burkina Faso":[["Bonnie","Charles","Peggy","Patricia","Edgar","Danny"],["Orozco","Williams","Decker","Lee","Lawson"]],"Burundi":[["Sandra","Jason","Lisa","Brandy","Stephen","Daniel"],["Pierce","Martin","Johns","Lynch","Hendricks","Chapman"]],"Cabo Verde":[["Jeff","Sabrina","Richard","Stephen","Amy","Bryan"],["Lyons","Stephenson","Jones","Williams","Huff","Adams"]],"Chile":[["Ramón","Iván","Ashley","Sergio","Jorge","Antonia"],["Herrera","Sánchez","Núñez","Díaz","Espinoza","Silva"]],"China":[["Adam","Robin","Jack","David","Wesley","Anthony"],["James","Adams","Perkins","Rivera","Spencer","Wolf"]],"Cookinseln":[["Theresa","Tyler","Ashlee","Karen","Frances","Emma"],["Collins","Williams","Daniel","Ellis","Mooney","Pham"]],"Costa Rica":[["Carlos","Stephen","Kelly","Brad","Richard","Marie"],["Walls","Liu","Strickland","Brock","King","Cook"]],"Curaçao":[["Julian","Eric","Belinda","Julie","Melanie","Cory"],["Cannon","Garcia","Munoz","Joseph","Hernandez","Fowler"]],"Deutschland":[["Käthe","Sinaida","Raissa","Gino","Mariechen","Hubertus"],["Mangold","Dussen van","Siering","Krause","Mende","Bolzmann"]],"Dominica":[["Jeffrey","Christopher","Brittany","Mark","Roy","Marilyn"],["Jones","Ruiz","Griffin","Rodriguez","Kelly"]],"Dominikanische Republik":[["Dennis","Nicole","Sandy","Michelle","Ashley","Stacey"],["Hatfield","Rodriguez","Martin","Lewis","Davis","Ross"]],"Dschibuti":[["Mary","Theresa","Angela","Margaret","Benjamin","Amanda"],["Thompson","Lee","Gray","Jenkins","Walker","Peters"]],"Dänemark":[["Janni","Julius","Rolf","Pernille","Signe","Josefine"],["Olesen","Andersen","Karlsen","Clausen","Thorsen"]],"Ecuador":[["Brandi","Paul","Ryan","Gary","Amber","Kevin"],["Owens","Jones","Murphy","Lee","Harrington","Ashley"]],"El Salvador":[["Jonathan","Melanie","Joanna","Matthew","Lisa","Carlos"],["Moore","Miller","Martin","Watson","Mitchell","Anderson"]],"Elfenbeinküste":[["David","Johnny","Amanda","Sean","Philip","Rebecca"],["Crane","Brooks","Simmons","Schwartz","Anderson","Oneill"]],"Eritrea":[["Kayla","Austin","Robert","Calvin","Travis","Christine"],["Stout","Shaw","Rivera","Brown","Garcia","Reynolds"]],"Estland":[["Natalia","Niina","Sander","Kristina","Andrei","Elena"],["Adamson","Kolk","Orav","Jõe","Org","Rebane"]],"Eswatini":[["Jacob","Rebecca","Miguel","Brandon","Barbara","Blake"],["Warner","Scott","Hernandez","Thornton","King","Newton"]],"Falklandinseln":[["Donald","Daniel","Heather","Michael","Sarah","Fernando"],["Maxwell","Norton","Burke","Neal","Perez","Ashley"]],"Fidschi":[["Fernando","Christopher","Michael","Emily","Rita","Susan"],["Wilson","Gibson","Hicks","Gray","Powell","Chan"]],"Finnland":[["Emilia","Krista","Johannes","Susanna","Julius","Juha"],["Leino","Saarela","Holopainen","Ruuskanen","Nurminen","Taipale"]],"Frankreich":[["Jean","Claudine","Thibaut","Laurent","Jacques","Margaux"],["Rivière","Ferreira","Olivier","Lefebvre","Étienne","Lagarde"]],"Französisch-Guayana":[["Kelly","Eric","Richard","Matthew","Amy","Andrea"],["Perez","Pitts","Miller","Miles","Nelson","Hays"]],"Französisch-Polynesien":[["Justin","Janet","Monique","Anna","Melinda","Kyle"],["Lang","Schwartz","Evans","Murray","Zimmerman","Little"]],"Französische Süd- und Antarktisgebiete":[["Tiffany","George","Kathleen","Penny","Katie","Dennis"],["Lee","Bennett","Allen","Avila","Fletcher","Salinas"]],"Färöer":[["Steven","Mark","Rita","Tiffany","Betty","Brian"],["Burke","Foley","Hughes","Melton","Lawson","Taylor"]],"Gabun":[["Kristopher","Tyler","Keith","Jason","Jennifer","Daniel"],["Flores","Bryant","Ware","Barton","Mckinney","Fernandez"]],"Gambia":[["Cassandra","Tammy","Kevin","Toni","Maria","Lauren"],["Nelson","Benson","Brown","Chavez","Beard","Parker"]],"Georgien":[["ოთარ","ვერიკო","გივი","მურთაზ","ომარ","ევგენია"],["ჯანელიძე","წერეთელი","გაჯიევა","მაჩიტიძე","გურგენიძე","ცარციძე"]],"Ghana":[["Heather","Jack","Lori","Phyllis","Anthony","Thomas"],["Anderson","Bullock","Schmitt","Hickman","Vazquez","Rich"]],"Gibraltar":[["Jasmine","Joseph","Dana","Garrett","Terry","Lori"],["Wise","Weber","Stewart","Reese","Ford","Torres"]],"Grenada":[["Jacob","Leslie","Gabrielle","Katrina","Daniel","Kenneth"],["Brown","Bruce","Murray","Fisher","Young","Miller"]],"Griechenland":[["Συμεώνη","Κύρος","Θωμαίς","Ελευθερία","Γλαύκη","Δημοκράτης"],["Γιαννακουδάκης","Γκίνης","Μπελέκου","Φιλίππου","Χοντζιά","Χατζόπουλος"]],"Großbritannien":[["Frances","Hilary","Kirsty","Karl","Debra","Angela"],["Davis","Ward","Lee","Parker","Murphy","Sheppard"]],"Grönland":[["Megan","Alexander","Daniel","Sherry","Julia","Courtney"],["Nichols","Booth","Norman","Caldwell","Oconnor","Gibson"]],"Guadeloupe":[["Kathleen","Mitchell","Angela","Jennifer","Cynthia","Robert"],["Holloway","Matthews","Myers","Mclean","Wilson","Cook"]],"Guam":[["Michael","Sheila","William","Vincent","Sarah","Ryan"],["Ramos","Thompson","Nguyen","Williams","Garcia","Bauer"]],"Guatemala":[["Timothy","James","Jose","Marc","Tyler","Steven"],["Maynard","Ramirez","Leon","Nguyen","Perkins","Campbell"]],"Guernsey":[["Christopher","Alex","Tanya","Robert","Gregory","Alexis"],["Gregory","Torres","Sanchez","Jones","Alexander","Wyatt"]],"Guinea":[["Matthew","William","Todd","Anthony","Kimberly","Tracy"],["Williams","Smith","Haas","Johnson","Kelly"]],"Guinea-Bissau":[["Gavin","Kimberly","Michael","Martin","Nathaniel","Jay"],["Wilson","Ellis","Strickland","Russell","Sanders","Ramos"]],"Guyana":[["Cheryl","Cole","Vanessa","Brian","Mackenzie","Amy"],["Simmons","Collins","Neal","Wilson","Burgess","Gamble"]],"Haiti":[["Cindy","Tammy","Amanda","Nathan","Matthew","Jennifer"],["Perry","Rodriguez","Lee","Porter","Thompson","Webb"]],"Heard und McDonaldinseln":[["Robert","Heather","Willie","Jennifer","Timothy","April"],["Marks","Harris","Jones","Miranda","Diaz","Wilson"]],"Honduras":[["Shawn","Michael","Jennifer","Kylie","Kristi","Melissa"],["Mills","Anderson","Payne","English","Fox","Hoffman"]],"Hongkong":[["Logan","Rodney","Jason","Jennifer","Patricia","Diana"],["White","Arnold","Franklin","Lewis","Noble","Robinson"]],"Indien":[["Parth","Ekaja","Guneet","Onveer","Pahal","Finn"],["Bakshi","Sami","Sen","Sane","Sani","Sinha"]],"Indonesien":[["Wage","Dono","Raditya","Vicky","Rachel","Danang"],["Damanik","Manullang","Wibowo","Laksmiwati","Widodo","Tarihoran"]],"Irak":[["Megan","Jeffery","William","Maureen","Emily"],["Cole","Owens","Graves","Ramos","Fletcher","Holland"]],"Iran":[["مبين","یوسف","ثنا","النا","محمدامین","محمدعلي"],["اکبر پور","حسنی","حریریان","هدایت","جنتی","هومن"]],"Irland":[["Taylor","Eryn","Bernard","Jessica","Mary","Deaglan"],["Dooley","Finneran","Leddon","Hanley","McTernan","Cunningham"]],"Island":[["Dagmar","Guðríður","Karína","Hekla","Hjálmar","Arthúr"],["Sporðisson","Valgeirsson","Mánisdóttir","Erlingsson","Freysteinnsdóttir","Veturliðisdóttir"]],"Isle of Man":[["Jennifer","Taylor","Dale","Jill","Rebecca"],["Rivas","Moore","Taylor","Alexander","Huerta","Liu"]],"Israel":[["עידו","גיא","אביה","יוסף","אליענה","מוחמד"],["ח'טיב","פרידמן","גור","טל","כהן","אבו ראס"]],"Italien":[["Fernanda","Elvira","Lara","Achille","Graziella","Gianpaolo"],["Faugno","Monaco","Agostinelli","Prodi","Giacconi","Ossani"]],"Jamaika":[["Johnny","Lee","Scott","Mason","Brandon","Emily"],["Riley","Adams","Hill","Jackson","Roberts","Garcia"]],"Japan":[["翼","篤司","晃","英樹","裕樹"],["井上","村上","遠藤","佐藤","吉田"]],"Jemen":[["Madison","Lisa","Sarah","Jason","Jonathan","Alexandra"],["Lopez","Casey","Little","Cobb","Johnson","Boyer"]],"Jersey":[["Tracy","Alan","Jeremy","Heather","Brianna","Meghan"],["Watson","Chase","Wilson","Rodriguez","Johnson","Taylor"]],"Jordanien":[["Austin","Caleb","Julia","Steven","Mary"],["Singh","Murphy","Vargas","Marshall","Bryant"]],"Kaimaninseln":[["Michael","James","Laura","Kenneth","Marc","Michele"],["Henry","Owen","Walters","Koch","Fletcher","Williams"]],"Kambodscha":[["Matthew","Brittany","Claudia","Michael","Joseph","Christopher"],["Camacho","Mosley","Johns","Jones","Thomas","Tate"]],"Kamerun":[["Mark","Crystal","April","Robert","David","Jonathan"],["Gray","Kennedy","Rollins","Green","Manning","Norton"]],"Kanada":[["Erin","Christopher","Robert","Michael","Carlos","Jacob"],["Navarro","Goodman","Jones","Duke","Yates","Ortiz"]],"Karibische Niederlande":[["Benjamin","Jasmine","Jessica","Richard","Jose","Brenda"],["Price","Mata","Simmons","Bolton","Mason","Perry"]],"Kasachstan":[["Caitlin","Emily","Melissa","Jennifer","Randall","Daniel"],["Smith","French","Clark","Leach","Cook","Williams"]],"Katar":[["Megan","William","Brandi","Terry","Jodi"],["Baker","Hansen","Fields","Keller","Stevens","Brown"]],"Kenia":[["Gerald","George","Sheila","Grace","Alexander","Abdi"],["Atieno","Okinyi","Maina","Njiru","Odhiambo","Musa"]],"Kirgisistan":[["Thomas","Matthew","Sabrina","Rachel","Cindy","Michael"],["Phelps","Newman","Parker","Griffin","Clark","Daniel"]],"Kiribati":[["Ronald","Jenna","Terry","Kaitlyn","Alyssa","William"],["Sweeney","Cole","Martin","Cooley","James","Barker"]],"Kokosinseln":[["Daniel","Kimberly","Michael","Stanley","Yolanda","Mackenzie"],["Wright","Knox","Blair","Evans","Baldwin","Miles"]],"Kolumbien":[["Luis","Dora","Nubia","Fabián","Manuel","Augusto"],["Moreno","López","Caicedo","Henao","Jaramillo","Patiño"]],"Komoren":[["Patrick","Matthew","Steven","Michael","Reginald","Billy"],["Walker","Brown","Morris","Ross","Hernandez","Harrington"]],"Kongo-Brazzaville":[["Christopher","Mary","Tammy","Matthew","Calvin","Barry"],["Thompson","Lynch","Sanders","Freeman","Lara","Scott"]],"Kongo-Kinshasa":[["James","Cody","Audrey","Bruce","Alan","Bradley"],["Baker","Todd","Hays","Ray","Montoya","Baxter"]],"Kroatien":[["Ljubica","Zorka","Matija","Mara","Davor","Leon"],["Sikirić","Maretić","Kolarec","Gudelj","Živić","Baničević"]],"Kuba":[["Melissa","Ricky","Matthew","Marc","Rachel"],["Stevenson","Thompson","Jones","Harding","Strickland","Baird"]],"Kuwait":[["Monica","Colin","Daniel","Thomas","Randy","Matthew"],["Wilson","Lee","Estrada","Miles","Anderson","Gray"]],"Laos":[["Benjamin","Kathleen","Brittany","William","Samuel","Ashley"],["Dillon","Gay","Pierce","Kane","Mitchell","Copeland"]],"Lesotho":[["Abigail","Kevin","Shannon","Katie","Jessica","Joshua"],["Coleman","Weber","Moore","Garcia","Luna","Brown"]],"Lettland":[["Andrešs","Rihards","Jēkabs","Amālija","Elīna","Oto"],["Jaunzema","Krieva","Celmiņa","Rudzītis","Kļaviņš","Lūsis"]],"Libanon":[["Mark","Erika","Larry","Eric","Ashley","Samantha"],["Cain","Powell","Mccormick","Cooper","Walker","Smith"]],"Liberia":[["Jessica","Patricia","Tanner","Heather","Danielle","Samantha"],["Miles","Romero","White","Price","Sparks","Weiss"]],"Libyen":[["Angela","Sarah","Jesse","Glen","Crystal","Gabriel"],["Anderson","Morgan","Fleming","Brown","Spears","Cameron"]],"Liechtenstein":[["John","Jane","Alex","Alex"],["Öhri","Sele","Frick","Wohlwend","Kieber","Schädler"]],"Litauen":[["Matas","Povilas","Jorūnė","Ineta","Gediminas","Ana"],["Stankevičius","Kairys","Butkus","Kavaliauskas","Galdikas","Žukauskas"]],"Luxemburg":[["John","Jane","Alex","Alex"],["Thinnes","Schiltz","Beissel","Goetzinger","Heinen","Theisen"]],"Madagaskar":[["Gloria","Maria","George","Ryan","Tanya","Gary"],["Schwartz","Shaffer","Terry","Johnson","Grimes","Powell"]],"Malawi":[["Debra","Taylor","Kim","Crystal","Jerome","Jane"],["Hall","Knight","Butler","Pugh","Neal","Brown"]],"Malaysia":[["Jermaine","Lisa","Priscilla","Courtney","Deborah"],["Higgins","Petty","Ross","Garcia","Anderson","King"]],"Malediven":[["Elizabeth","Tara","Heather","Michelle","Monica","Dean"],["Henderson","Garrison","Daniel","Moore","Martin","Taylor"]],"Mali":[["Marilyn","Benjamin","Shawn","Leah","Melissa","Rebecca"],["Short","Willis","Peterson","Carrillo","Washington","Bell"]],"Malta":[["Victoria","Steven","Julie","Lauren","Joshua","Christian"],["Leblanc","Smith","Sims","Lewis","Willis","Williams"]],"Marokko":[["Jeffrey","Robert","Maria","Christina","Lindsey","Tina"],["Morrow","Elliott","Smith","Duncan","Gates","Hamilton"]],"Marshallinseln":[["Joan","Duane","Daniel","David","Sara","Kayla"],["Alvarez","Tate","Day","Lamb","Church","Gonzalez"]],"Martinique":[["Victoria","Erica","Jerome","Bradley","Shannon","Brooke"],["Gomez","Brown","Cunningham","Cardenas","Greene","Dyer"]],"Mauretanien":[["Stephen","Shannon","Ricardo","Maria","Heather","Antonio"],["Stevenson","Campbell","Lewis","Cox","Snow","Moore"]],"Mauritius":[["Joy","Robert","Christopher","Craig","Nicholas","Natalie"],["Vega","Simon","Farley","Mercer","Carr","Sheppard"]],"Mayotte":[["Lynn","Denise","Jennifer","Joshua","Kenneth","Beth"],["Clark","Salas","Moore","Gomez","Richardson","Contreras"]],"Mexiko":[["Lilia","Eloisa","María Luisa","Cristian","Adela","Julia"],["Samaniego","Leyva","Morales","Peña","Quezada","Vera"]],"Mikronesien":[["Michael","Melissa","Amber","Kim","Jonathan","Patrick"],["Johnson","Rodriguez","Payne","Evans","Fisher","Harris"]],"Moldau":[["Tiffany","Debra","Laura","Jonathan","Christine","Kayla"],["Walters","Clayton","Malone","Jones","Collins","Oliver"]],"Monaco":[["Sarah","Jesse","Gary","Joel","Susan","Karen"],["Martin","Brooks","Ponce","Velasquez","Smith","Williams"]],"Mongolei":[["Tyler","Patrick","Ashley","Jordan","Katie","Mary"],["Carter","Harris","Ramsey","Haley","Cooper","Lee"]],"Montenegro":[["Sharon","Oscar","Danny","Amber","Audrey","Michael"],["Glenn","Powers","Fitzpatrick","Williams","Ferguson","Howard"]],"Montserrat":[["Sonya","Michael","Robin","Elizabeth","Mark","Christopher"],["Henderson","Morgan","Donaldson","Smith","Ibarra","Rivera"]],"Mosambik":[["James","Gregory","Nancy","Eric","Denise","Wayne"],["Fox","Lucero","Gaines","Gutierrez","Ford","Martinez"]],"Myanmar":[["Anthony","Nathan","Maria","Lawrence","Joel","Derek"],["Wilson","Peterson","Johnson","Fernandez","Blackwell","Norton"]],"Namibia":[["Danielle","Christopher","Daniel","Kevin","Keith","Veronica"],["Davidson","Hawkins","Diaz","Stewart","Banks","Brown"]],"Nauru":[["David","Wesley","Michael","Blake","Olivia","Joshua"],["Marshall","Romero","Smith","Miller","Villanueva","Hartman"]],"Nepal":[["Vanessa","Joseph","Elizabeth","Ricky","Debbie","Lisa"],["Sims","Hernandez","Williams","Mcgrath","Smith","Stone"]],"Neukaledonien":[["Christopher","Brandon","Lisa","Nicholas","Jessica"],["Walker","Arnold","Hogan","Taylor","Bond","Young"]],"Neuseeland":[["Anna","Emily","Anne","Gregory","Lilly","Alexandra"],["Steele","Drew","Eaton","Fox","Kenny","Strawbridge"]],"Nicaragua":[["Jeremy","Sara","Susan","Daniel","John","Michael"],["Dillon","Murillo","Li","Holmes","Washington","Bennett"]],"Niederlande":[["Bart","Nikki","Norah","Samuel","Berend"],["Roessink","van den Nieuwenhuijsen","Kuiper","Arent","de Bruijn","Woudenberg"]],"Niger":[["Susan","Michael","Kari","Hannah","Jennifer","Stephanie"],["Chen","Reese","Baker","Li","Lopez","Perez"]],"Nigeria":[["Paul","Elizabeth","David","Hope","Patience"],["Oshodi","Ibrahim","Akinwale","Nnamani","Balogun"]],"Niue":[["Rachel","Jenna","Joyce","Michael","Dave","Kristine"],["Walsh","Butler","Miles","Owens","Brown","Hall"]],"Nordkorea":[["Vanessa","Melissa","Laura","Jonathan","Wendy","Katherine"],["Hughes","Fox","White","Ramos","Martin","Garcia"]],"Nordmazedonien":[["Richard","Devin","Jennifer","Courtney","Jacob","Jared"],["Mason","Cortez","Woodard","Baldwin","Cervantes","Kaiser"]],"Norfolkinsel":[["Glenn","Daniel","Lindsey","Jennifer","Hailey","Scott"],["Vargas","Johnson","Lopez","Carlson","Palmer","Chavez"]],"Norwegen":[["Linda","Emil","Karoline","Marianne","Kristian","Alexander"],["Mathisen","Jensen","Evensen","Bakke","Hansen","Paulsen"]],"Nördliche Marianen":[["David","Sarah","Yesenia","Jacqueline","Thomas","Roy"],["Duncan","Perez","Johnson","Cook","Parsons","Garcia"]],"Oman":[["David","Christina","Sandra","Matthew","Andrew","Alexis"],["Alexander","Simmons","Bentley","Nichols","Young","Crosby"]],"Pakistan":[["Qudoos","Talal","Zaheer","Raheem","Kaazim","Yaman"],["Vahar","Aadil","Jameel","Ihab","Faizan","Najeeb"]],"Palau":[["William","Kelly","Lee","Richard","Rebecca","Scott"],["Carter","Clark","Garner","Ramirez","Ryan","Stokes"]],"Palästinensische Autonomiegebiete":[["Amanda","Elizabeth","Robin","Dalton","Joshua","Wendy"],["Johnson","Brown","Wilson","Thomas","Case"]],"Panama":[["Adam","Chelsea","Zoe","Justin","Carrie","Kristen"],["Melendez","Mitchell","Macias","Hull","Moreno","Houston"]],"Papua-Neuguinea":[["John","Larry","Jeremy","James","Cynthia","Crystal"],["Harmon","Hardin","Mcclain","Rodriguez","Curtis","Phillips"]],"Paraguay":[["Jeffrey","Christine","Douglas","Elizabeth","Sophia","Jessica"],["Parker","Gordon","Evans","Mann","Torres","Hurst"]],"Peru":[["Johnathan","Brian","Jessica","Beth","Evelyn"],["Garrett","Becker","Richards","Vaughan","Hogan","Daniels"]],"Philippinen":[["Ashley","Robert","Alex","Richard","Barbara","Charles"],["Frost","Barrett","Conley","Ellis","Short","Carter"]],"Pitcairninseln":[["Nicole","Andrea","Kathy","Natalie","Jim","Shelley"],["Hanson","Holmes","Chen","Stone","Kim","Rodriguez"]],"Polen":[["Anna Maria","Daniel","Elżbieta","Eliza","Aleksander","Kalina"],["Chomiak","Cywka","Skrobek","Simon","Choroś","Wilusz"]],"Portugal":[["Francisco","Irina","Lisandro","Carminho","Isaac","Gabriel"],["Ribeiro","Alves","Pinheiro","Garcia","Vieira","Rodrigues"]],"Puerto Rico":[["Gregory","Brandon","Donald","Megan","Lisa","Christopher"],["Fitzpatrick","Jackson","Smith","Carr","Kidd","Whitaker"]],"Ruanda":[["James","Barbara","Renee","Frederick","Jeremy","Derek"],["Durham","Rhodes","Castillo","Case","Powell","Griffith"]],"Rumänien":[["Dumitru","Catinca","Cedrin","Jasmina","Georgia","Roxelana"],["Tomescu","Mazilescu","Voinea","Toma","Dumitrescu","Nistor"]],"Russland":[["Надежда","Авдей","Лавр","Мариан","Натан","Сидор"],["Егоров","Шарапов","Красильникова","Ефремов","Жданов","Иванова"]],"Réunion":[["Linda","Joseph","Joshua","Rebecca","Emily","Amy"],["Roberts","Avery","Tanner","Rodriguez","Davenport","Powell"]],"Salomonen":[["Ellen","Stephanie","Kathleen","Barbara","John","Christian"],["Glover","Hill","Turner","Johnson","Patterson","Lewis"]],"Sambia":[["John","Gail","Michelle","Brooke","Christopher","Catherine"],["Henry","Clark","Mann","Rogers","Daugherty","Swanson"]],"Samoa":[["Calvin","Debra","Dana","Tracy","Richard","Samantha"],["Hill","Moreno","Smith","Johnson","Dixon","Floyd"]],"San Marino":[["Angel","Andrew","Sarah","David","Jose","Christopher"],["Gomez","Collins","Woodward","Williams","Brown","Harvey"]],"Saudi-Arabien":[["Kelly","Valerie","Patricia","Kyle","Jamie","Nathaniel"],["Miller","Bowman","Davenport","Wood","Gonzalez","Mercer"]],"Schweden":[["Anna","Monika","Ingvar","Fred","Sofia"],["Johansson","Sandström","Abdullah","Khalil","Nilsson","Sjöberg"]],"Schweiz":[["Lindita","Dean","Miran","Eugenio","Annelise","Käthe"],["Kaufmann","Lanz","Roos","Ritter","Iten","Steinmann"]],"Senegal":[["Amanda","Nancy","Lauren","Vernon","Jennifer","Richard"],["Allen","Wilkinson","Reed","Clayton","Stone","Church"]],"Serbien":[["Jonathan","John","Susan","Jesse","Lindsay","Andrew"],["Rodriguez","Mendoza","Oliver","Brown","Bailey","Anderson"]],"Seychellen":[["Karen","Charles","Dakota","Jason","Martin"],["Pena","Martin","Potter","Johnson","Meyer","Martinez"]],"Sierra Leone":[["Kelly","Joshua","Mark","James","Alfred","Danielle"],["Rodriguez","Barker","Nolan","Rivera","Chandler","Parsons"]],"Simbabwe":[["Shelly","Christopher","Rodney","Melissa","Sean","Brian"],["Mccall","Mayo","Smith","Gray","Rodriguez","Jackson"]],"Singapur":[["Allison","Angela","Joshua","Rhonda","Tommy","Gordon"],["Smith","Miller","Murphy","Palmer","Anderson","Lambert"]],"Sint Maarten":[["Scott","Elizabeth","James","Angela","Keith","Johnny"],["Li","Rodriguez","Gregory","Wright","Rhodes","Neal"]],"Slowakei":[["Darina","Ľuboš","Jarolím","Miloš","Ctibor","Enna"],["Krížová","Mihalík","Kovalčíková","Michalech","Tomková","Mach"]],"Slowenien":[["Roman","Ivan","Metka","Simona","Jelena","Ivo"],["Gorenc","Zemljič","Kumer","čeh","Hafner","Vodopivec"]],"Somalia":[["Angelica","Jonathan","Amber","Aaron","Michael","Anthony"],["Ingram","Williams","Campbell","Bradford","Miller","Leonard"]],"Sonderverwaltungsregion Macau":[["Cassandra","Angela","Deborah","Billy","Xavier","Peter"],["Hardin","Mitchell","Carter","Gonzales","Lucas","Logan"]],"Spanien":[["Fernando","Berto","Viviana","Ariadna","Encarna","Julio"],["Cuevas","Paredes","Ocaña","Barrio","Ferreras","Egea"]],"Spitzbergen und Jan Mayen":[["Darrell","Timothy","Andrew","William","Emily"],["Wilson","Bright","Smith","Salinas","Alexander","Gordon"]],"Sri Lanka":[["Matthew","Bonnie","Jonathan","Peggy","Sheryl","Julie"],["Russell","Gibbs","Gordon","Sanchez","Torres","Allen"]],"St. Barthélemy":[["Willie","Maurice","Joseph","Dylan","Daniel","Mary"],["Fox","Moreno","Garcia","Andrade","Coleman","White"]],"St. Helena":[["Joshua","Isabel","Jessica","Jacqueline","John","Bernard"],["Schmidt","Stewart","Green","Perez","Aguilar","Richardson"]],"St. Kitts und Nevis":[["Isaiah","Ricardo","Lisa","Marcus","Ryan","Michael"],["Johnson","Diaz","Powell","Smith","Walters","Harris"]],"St. Lucia":[["James","William","Cynthia","Michael","Kelsey"],["Adams","Hughes","Johnson","Kelly","Marshall","Wilson"]],"St. Martin":[["Randall","Michael","David","Sara","Allen"],["Carter","Dawson","Sanders","Ray","Parks","Taylor"]],"St. Pierre und Miquelon":[["Joel","Christopher","Jose","David","Ashley","Jill"],["Williams","Willis","Harris","Houston","Church","Gibson"]],"St. Vincent und die Grenadinen":[["Lindsey","Sergio","Anthony","Nicole","Shane","Lisa"],["Malone","Thompson","Smith","Miller","Landry","Jimenez"]],"Sudan":[["Keith","Michaela","Allen","Charles","Craig","James"],["Murray","Lowe","Mitchell","Arnold","Harper","Austin"]],"Suriname":[["Michael","Angelica","Eric","Melissa","Anthony","Christopher"],["Wong","Gonzales","Mitchell","Walker","Williamson","Thomas"]],"Syrien":[["Mary","Juan","Caitlin","Timothy","Scott","John"],["Rice","Hendricks","Stewart","Brown","Espinoza","Walker"]],"São Tomé und Príncipe":[["Steven","James","Amy","Rachel","Stephanie","Veronica"],["Sanchez","House","Green","Lopez","Martin","Hayden"]],"Südafrika":[["Chad","Craig","Katherine","Donna","Christopher","Jeffrey"],["Phillips","Martinez","Smith","Rogers","Wilson","Williams"]],"Südgeorgien und die Südlichen Sandwichinseln":[["Steven","Emily","Rachel","Melissa","Kenneth","Stefanie"],["Oliver","Luna","Butler","Manning","Perkins","Bailey"]],"Südkorea":[["순옥","경숙","주원","정희","성현","영숙"],["김","이","심","박","고"]],"Südsudan":[["Patrick","William","Sabrina","Alexa","Molly","Amber"],["Bell","Bailey","Quinn","Lee","Perez","Smith"]],"Tadschikistan":[["Linda","Michael","Valerie","Stacey","Samuel","Matthew"],["Fleming","Ortiz","Fletcher","Moss","Schaefer","Weber"]],"Taiwan":[["Kimberly","Theresa","Lee","Tina","James","Anthony"],["Mccarthy","Brown","Lucas","Perez","Allen","Rosales"]],"Tansania":[["Megan","Brian","George","Miranda","Robert","Michael"],["Thomas","Smith","Watson","Frederick","Davis","Chandler"]],"Thailand":[["โกมล","นภนต์","วันฉัตร","เพ็ญยุภา","เกษรา","โสภณิตา"],["ตัณสถิตย์","ธนรักษ์","ถนัดรักษา","นุชแนวนุ่ม","ถนอมกุลบุตร","แจ้งสว่าง"]],"Timor-Leste":[["Alexander","Lisa","Andrew","Sarah","Jennifer","Mariah"],["Howard","Lowe","Coffey","Carpenter","Pearson","Rodriguez"]],"Togo":[["Abigail","Colton","Patricia","John","Cindy","Robert"],["Miller","Turner","Allen","Christian","Murray","Thompson"]],"Tokelau":[["Sydney","Taylor","Tyler","Ricardo","Richard","Barry"],["Murray","Williams","Davis","Rollins","Cole","Stewart"]],"Tonga":[["Kevin","Nathaniel","Melissa","Anne","Monica","Robert"],["Harris","Caldwell","Holmes","Williams","Davis","Woods"]],"Trinidad und Tobago":[["Steven","Edward","Nicholas","Jessica","Jonathan","Debra"],["Ortiz","Parker","Greer","Villanueva","Miller"]],"Tschad":[["Mark","Michael","Rose","Alicia","Elizabeth","Jamie"],["Mendez","Dawson","Sanchez","Holmes","Carr","Moss"]],"Tschechien":[["Kamila","Hynek","Viktor","Michaela","Antonín","Věra"],["Sedlák","Čermáková","Čermák","Šťastný","Sýkora","Holubová"]],"Tunesien":[["Jose","Tyler","Linda","David","Heather","Michael"],["Reese","Castillo","Weber","Beasley","Bartlett","Barnes"]],"Turkmenistan":[["Steve","Michael","Rose","Randall","Alan","Scott"],["Avila","Anderson","Stewart","James","Fletcher","Liu"]],"Turks- und Caicosinseln":[["Spencer","Kimberly","Jessica","Troy","Edward","Richard"],["Adams","Jones","Lee","Gonzales","Hayes","Ortiz"]],"Tuvalu":[["Sally","Tara","Tracy","Glenda","Amanda"],["Crawford","Kelley","Coleman","Solis","Dunn","Garcia"]],"Türkei":[["İlklima","Bezek","Karaca","Yargı","Asliye","Beren"],["Akça","Ergül","Erdoğan","Ülker","Akçay","Gülen"]],"USA":[["Nancy","Karen","Logan","Jacob","Jamie","John"],["Norton","Castillo","Thompson","Tanner","Webb","Moore"]],"Uganda":[["Ashley","Catherine","Kevin","Jeremy","Jennifer","Robert"],["Patel","Bell","Hogan","Gonzalez","Wu","Gill"]],"Ukraine":[["Йосип","Аніта","Ліза","Данило","Климент","Трохим"],["Захарченко","Салій","Андріїшин","Удовиченко","Їжакевич","Супруненко"]],"Ungarn":[["Anna","Róbert","Márta","Mária","Virág","Marcell"],["Jónás","Nagy","Balog","Farkas","Kerekes"]],"Uruguay":[["James","Pamela","Kent","Dennis","Wendy","Paul"],["Phillips","Rodgers","Roberts","Mendez","Raymond","Logan"]],"Usbekistan":[["Aliya","Dunyo","Samandar","Sardor","Farzona","Sanjar"],["Ahmadov","Samandarov","Odinaeva","Shohruxov","Akobirov","Muhammadyusupov"]],"Vanuatu":[["Gerald","Jean","Jessica","Kayla","Mike","Jacqueline"],["Douglas","Hoover","Flores","Weaver","Jones"]],"Vatikanstadt":[["Susan","Antonio","Michael","Tommy","Angela","Joseph"],["Morales","Wall","Ford","Green","Bennett","Cox"]],"Venezuela":[["Anthony","Samuel","William","Rodney","Jeffrey","Rebecca"],["Lopez","Hartman","Perez","Taylor","Contreras","Hernandez"]],"Vereinigte Arabische Emirate":[["Charles","Nathan","Ebony","Christina","Jason","Sarah"],["Cochran","Perez","Jones","George","Bennett","Adams"]],"Vietnam":[["Edward","Brenda","Ann","Frank","Joshua","Kyle"],["Kemp","Pacheco","Johnson","Baird","Adams","Murphy"]],"Wallis und Futuna":[["Dale","Ryan","Jesus","Hailey","Chad","Alison"],["Williams","Bryant","Miller","Oconnell","Lester","Carney"]],"Weihnachtsinsel":[["Kevin","Rita","Brandon","Elizabeth","Timothy","Brenda"],["Sellers","Hughes","Burton","French","Williams","May"]],"Westsahara":[["Linda","Rebekah","Nicole","Christian","Judy","Sarah"],["Shaw","Gonzales","Castro","Richards","West","Hubbard"]],"Zentralafrikanische Republik":[["Alexander","Rebecca","Amber","Steven","Adrienne","Jerry"],["Wilson","Moore","Walker","Gilbert","Horton","Woods"]],"Zypern":[["Kevin","Joyce","Amber","Felicia","Matthew","Thomas"],["Cabrera","Butler","Bailey","Black","Dixon","Brown"]],"Ägypten":[["Steven","Jessica","Michael","Anne","Craig"],["Hughes","Mendez","Murillo","Hawkins","Scott","Nelson"]],"Äquatorialguinea":[["Melissa","Samuel","Rebekah","Deborah","Craig","Micheal"],["Estrada","Wilson","Miranda","Martinez","Colon","Duran"]],"Äthiopien":[["Amy","Jeffrey","Anthony","Casey","Madison","Kelly"],["Rogers","Adams","Davis","Houston","White","Young"]],"Ålandinseln":[["Patrick","Betty","Brian","Laura","Amanda","Robin"],["Blanchard","Taylor","Stewart","Brooks","Peck","Pacheco"]],"Österreich":[["Emely","Richard","Marcus","Clemens","Noel","Mert"],["Mayrhofer","Tanzer","Kraxner","Jahn","Schindler","Lammer"]]};
+
+  function countryFlag(iso){
+    const code=String(iso||'').toUpperCase().slice(0,2);
+    return [...code].map(ch=>String.fromCodePoint(127397+ch.charCodeAt(0))).join('');
+  }
+  const COUNTRY_OPTIONS = ALL_COUNTRIES.map(c=>({...c,flag:countryFlag(c.iso)}));
   const NAME_POOLS={
     USA:[['Jack','Mason','Ethan','Tyler','Cole','Owen','Logan'],['Miller','Johnson','Brown','Wilson','Davis','Walker','Bennett']],
     Canada:[['Liam','Noah','Carter','Lucas','Mason','Evan','Ryan'],['MacDonald','Campbell','Bennett','Smith','Turner','Martin','Reed']],
@@ -200,9 +209,10 @@
     Object.assign(state,fresh);
     const teams=buildTeams();
     teams.forEach(t=>state.teams[t.id]=t);
-    state.leagues.L1=makeLeague(teams.slice(0,8),'WORLD CUP A',1);
-    state.leagues.L2=makeLeague(teams.slice(8,16),'WORLD CUP B',2);
-    state.leagues.L3=makeLeague(teams.slice(16,24),'WORLD CUP C',3);
+    const seedTeams=[...teams].sort((a,b)=>(b.quality||0)-(a.quality||0)).slice(0,24);
+    state.leagues.L1=makeLeague(seedTeams.slice(0,8),'WORLD CUP A · TOP DIVISION',1);
+    state.leagues.L2=makeLeague(seedTeams.slice(8,16),'WORLD CUP B · ELITE DIVISION',2);
+    state.leagues.L3=makeLeague(seedTeams.slice(16,24),'WORLD CUP C · CHALLENGER',3);
     state.userTeamId=null;
     state.selectedCountry=null;
     state.market=generateMarket(60);
@@ -253,7 +263,7 @@
     const bias={G:{def:13,lead:5,control:2},LD:{def:12,pass:5,control:4},RD:{def:12,pass:5,control:4},LW:{pace:10,control:10,shoot:5,pass:3},C:{pass:11,control:10,shoot:6,lead:5},RW:{pace:10,control:10,shoot:5,pass:3}}[pos]||{};
     const skill={pace:0,shoot:0,pass:0,def:0,control:0,lead:0};
     Object.keys(skill).forEach(k=>skill[k]=clamp(Math.round(base-8+Math.random()*16+(bias[k]||0)),38,98));
-    const pool=NAME_POOLS[nationality]||[FIRST,LAST];
+    const pool=NAME_POOLS[nationality]||EXTRA_NAME_POOLS[nationality]||[FIRST,LAST];
     const name=`${pool[0][seed%pool[0].length]} ${pool[1][(seed*5+Math.floor(seed/4))%pool[1].length]}`;
     return {id:uid('p'),name,pos,age,rating,skill,salary:Math.round(1800+rating*rating*8+age*140),value:Math.round(65000+rating*rating*110+(30-age)*4200),form:Math.round(72+Math.random()*28),teamColor,skin:pick(SKIN),hair:pick(HAIR),games:0,goals:0,assists:0,yellow:0,marketHeat:Math.random(),contractYears:2,contractEndSeason:state.season+2,nationality,bio:`Fiktiver Nationalspieler aus ${nationality}. Spielstil: ${pos==='G'?'Goalie':pos==='C'?'Center':'Skater'} mit Entwicklungspotenzial.`,priceChange:0,priceChangePct:0,isG:pos==='G',isGK:pos==='G',shots:0,saves:0,penaltyMinutes:0};
   }
@@ -276,12 +286,33 @@
   }
 
   function buildTeams(){
-    return TEAM_NAMES.map((x,i)=>{
-      const tier=i<8?1:i<16?2:3;
-      const t=teamObj(x[0],x[1],tier===1?84:tier===2?76:69,tier,i<4?['#3c5ee8','#d62035','#ffffff','#163b9a'][i]:null,i*100,x[2],x[3]);
-      t.roster.forEach(p=>{p.teamId=t.id;p.teamColor=t.teamColor;p.nationality=t.country;});
+    return COUNTRY_OPTIONS.map((c,i)=>{
+      const qualityScore=COUNTRY_QUALITY[c.iso] ?? (64 + ((i*7)%9));
+      const tier=qualityScore>=79?1:(qualityScore>=70?2:3);
+      const color=TEAM_COLORS[i%TEAM_COLORS.length];
+      const t=teamObj(c.name,c.name,qualityScore,tier,color,i*113,c.name,c.flag);
+      t.iso=c.iso; t.countryCode=c.iso; t.countryName=c.name; t.nation=c.name; t.divisionTier=tier;
+      t.roster.forEach(p=>{p.teamId=t.id;p.teamColor=t.teamColor;p.nationality=t.country;p.countryCode=c.iso;});
       return t;
     });
+  }
+
+  function configureActiveLeaguesForSelectedTeam(selectedId){
+    const selected=state.teams[selectedId]; if(!selected) return;
+    const all=Object.values(state.teams||{});
+    const others=all.filter(t=>t.id!==selectedId);
+    const nearest=[...others].sort((a,b)=>Math.abs((a.quality||65)-(selected.quality||65))-Math.abs((b.quality||65)-(selected.quality||65)) || String(a.name).localeCompare(String(b.name)));
+    const tier=selected.divisionTier||((selected.quality||65)>=79?1:(selected.quality||65)>=70?2:3);
+    const groups=[[],[],[]]; groups[tier-1].push(selected);
+    const used=new Set([selected.id]);
+    for(let i=0;i<nearest.length && groups[0].length<8;i++){const t=nearest[i]; if(used.has(t.id))continue; if(t.divisionTier===1 || groups[1].length>=8 && groups[2].length>=8){groups[0].push(t);used.add(t.id);}}
+    for(let i=0;i<nearest.length && groups[1].length<8;i++){const t=nearest[i]; if(used.has(t.id))continue; if(t.divisionTier!==1 || groups[0].length<8){groups[1].push(t);used.add(t.id);}}
+    for(let i=0;i<nearest.length && groups[2].length<8;i++){const t=nearest[i]; if(used.has(t.id))continue; groups[2].push(t);used.add(t.id);}
+    for(let g=0;g<3;g++){ for(const t of nearest){ if(groups[g].length>=8)break; if(used.has(t.id))continue; groups[g].push(t);used.add(t.id); } }
+    state.leagues={};
+    state.leagues.L1=makeLeague(groups[0].slice(0,8),'WORLD CUP A · TOP DIVISION',1);
+    state.leagues.L2=makeLeague(groups[1].slice(0,8),'WORLD CUP B · ELITE DIVISION',2);
+    state.leagues.L3=makeLeague(groups[2].slice(0,8),'WORLD CUP C · CHALLENGER',3);
   }
 
   function makeLeague(teams,name,level){
@@ -302,7 +333,7 @@
   }
 
   function generateMarket(n=48,nation=null){
-    const countries=(TEAM_NAMES.map(x=>x[2]));
+    const countries=COUNTRY_OPTIONS.map(x=>x.name);
     const target=nation||state.selectedCountry||pick(countries);
     const out=[];
     for(let i=0;i<n;i++){
@@ -379,15 +410,16 @@
   function normalizeState(){
     state.active=state.active||'home'; state.tactic=state.tactic||'1-2-2'; state.tactics=state.tactics||{pressing:62,risk:50,tempo:58,passing:56}; state.lineupPositions=state.lineupPositions||{};
     const leagueSizes=Object.values(state.leagues||{}).map(l=>Array.isArray(l.teams)?l.teams.length:0).sort((a,b)=>a-b);
-    const validStructure=Object.keys(state.teams||{}).length===24 && leagueSizes.join(',')==='8,8,8';
+    const validStructure=Object.keys(state.teams||{}).length>=100 && leagueSizes.join(',')==='8,8,8';
     if(!validStructure){
       const oldManager=state.manager||'Manager';
       const oldBudget=Number(state.teams?.[state.userTeamId]?.budget||46357);
       state.teams={};state.leagues={};
       const teams=buildTeams(); teams.forEach(t=>state.teams[t.id]=t); state.userTeamId=null;
-      state.leagues.L1=makeLeague(teams.slice(0,8),'WORLD CUP A',1);
-      state.leagues.L2=makeLeague(teams.slice(8,16),'WORLD CUP B',2);
-      state.leagues.L3=makeLeague(teams.slice(16,24),'WORLD CUP C',3);
+      const seedTeams=[...teams].sort((a,b)=>(b.quality||0)-(a.quality||0)).slice(0,24);
+      state.leagues.L1=makeLeague(seedTeams.slice(0,8),'WORLD CUP A · TOP DIVISION',1);
+      state.leagues.L2=makeLeague(seedTeams.slice(8,16),'WORLD CUP B · ELITE DIVISION',2);
+      state.leagues.L3=makeLeague(seedTeams.slice(16,24),'WORLD CUP C · CHALLENGER',3);
       state.manager=oldManager;
       state.market=generateMarket(48); state.coaches=generateCoaches();
       state.news=[
@@ -644,7 +676,7 @@
         <div class="scene-sky"><span class="moon">◐</span></div>
         <div class="scene-lights left ${u('lighting')?'on':''}"></div><div class="scene-lights right ${u('lighting')?'on':''}"></div>
         <div class="scene-stand stand-back" style="--rows:${Math.min(6,1+u('stands'))}"><i></i><i></i><i></i></div>
-        <div class="scene-pitch"><div class="scene-half"></div><div class="scene-circle"></div><div class="scene-goal left"></div><div class="scene-goal right"></div></div>
+        <div class="scene-pitch hockey-rink"><div class="rink-blue-line left"></div><div class="rink-blue-line right"></div><div class="rink-red-line"></div><div class="rink-center-circle"></div><div class="rink-faceoff top-left"></div><div class="rink-faceoff bottom-left"></div><div class="rink-faceoff top-right"></div><div class="rink-faceoff bottom-right"></div><div class="scene-goal left"></div><div class="scene-goal right"></div></div>
         <div class="scene-stand stand-front" style="--rows:${Math.min(5,1+u('stands'))}"></div>
         <div class="scene-fence ${u('fence')?'sponsor-ready':''}"></div>
         ${u('vip')?'<div class="scene-vip">VIP</div>':''}${u('catering')?'<div class="scene-kiosk">☕</div>':''}${u('merch')?'<div class="scene-kiosk merch">👕</div>':''}
@@ -884,9 +916,9 @@
   function ensureNationLogoCSS(){ if(document.getElementById('club-logo-fix-css')) return; const st=document.createElement('style'); st.id='club-logo-fix-css'; st.textContent='.club-crest{width:42px;height:42px;object-fit:contain;display:block;flex:0 0 auto}.team-select-card .club-crest{width:56px;height:56px;margin:auto}.match-versus img.club-crest,.live-score img.club-crest{width:54px;height:54px;object-fit:contain}.league-row img.club-crest,.table-row img.club-crest{width:34px;height:34px;object-fit:contain}'; document.head.appendChild(st); }
 
   function renderTeamOnboarding(){
-    const leagueData=[['L1','WORLD CUP A · TOP DIVISION'],['L2','WORLD CUP B · ELITE DIVISION'],['L3','WORLD CUP C · CHALLENGER']];
-    const tabs=leagueData.map(([id,label])=>`<section class="onboard-league"><h2>${label}</h2><div class="team-select-grid onboarding-grid">${state.leagues[id].teams.map(tid=>{const t=state.teams[tid];return `<button type="button" class="team-select-card ${state.pendingTeamId===tid?'selected':''}" data-select-team="${tid}"><div class="country-flag">${esc(t.flag)}</div><strong>${esc(t.name)}</strong><small>${esc(t.country)}</small><em>OVR ${Math.round(teamStrength(t))}</em></button>`}).join('')}</div></section>`).join('');
-    return `<div class="onboarding-screen hockey-onboarding"><section class="onboarding-card"><div class="hockey-cover-onboard"><img src="assets/screens/hockey-world-cup-27.jpg" alt="EISHOCKEY WORLD CUP 27"><div class="cover-gradient"></div><div class="cover-title">EISHOCKEY<br><span>WORLD CUP 27</span></div></div><div class="eyebrow">START · DEINE KARRIERE</div><h1>WÄHLE DEINE NATION</h1><p>Wähle ein Nationalteam. Alle Spieler sind fiktiv – der Transfermarkt bleibt strikt auf deine gewählte Nation beschränkt.</p><label class="input-label">MANAGERNAME<input class="text-input" id="welcomeManager" value="${esc(state.manager||'Manager')}" autocomplete="name"></label><div class="onboarding-scroll">${tabs}</div><div class="onboarding-footer"><div id="onboardingChoice">${state.pendingTeamId?`Ausgewählt: <b>${esc(state.teams[state.pendingTeamId]?.name||'Nationalteam')}</b>`:'Noch keine Nation ausgewählt.'}</div><button type="button" class="gold-btn wide" data-club-continue ${state.pendingTeamId?'':'disabled'}>WEITER</button></div><div class="onboarding-hint">🏒 Eishockey World Cup 27 · Fiktive Spieler · Nations-Transfermarkt · 2-Minuten-Live-Simulation</div></section></div>`;
+    const nations=COUNTRY_OPTIONS.map(c=>state.teams && Object.values(state.teams).find(t=>t.countryCode===c.iso)).filter(Boolean);
+    const cards=nations.map(t=>`<button type="button" class="team-select-card ${state.pendingTeamId===t.id?'selected':''}" data-select-team="${t.id}"><div class="country-flag">${esc(t.flag)}</div><strong>${esc(t.name)}</strong><small>${esc(t.country)}</small><em>OVR ${Math.round(teamStrength(t))}</em></button>`).join('');
+    return `<div class="onboarding-screen hockey-onboarding"><section class="onboarding-card"><div class="hockey-cover-onboard"><img src="assets/screens/hockey-world-cup-27.jpg" alt="EISHOCKEY WORLD CUP 27"><div class="cover-gradient"></div><div class="cover-title">EISHOCKEY<br><span>WORLD CUP 27</span></div></div><div class="eyebrow">START · DEINE KARRIERE</div><h1>WÄHLE DEINE NATION</h1><p>${nations.length} Länder mit Flaggen-Emoji. Alle Spieler sind fiktiv. Der Transfermarkt bleibt strikt auf deine gewählte Nation beschränkt.</p><label class="input-label">MANAGERNAME<input class="text-input" id="welcomeManager" value="${esc(state.manager||'Manager')}" autocomplete="name"></label><div class="nation-search-wrap"><input class="text-input" id="nationSearch" placeholder="Nation suchen …" autocomplete="off"></div><div class="onboarding-scroll nation-directory">${cards}</div><div class="onboarding-footer"><div id="onboardingChoice">${state.pendingTeamId?`Ausgewählt: <b>${esc(state.teams[state.pendingTeamId]?.name||'Nationalteam')}</b>`:'Noch keine Nation ausgewählt.'}</div><button type="button" class="gold-btn wide" data-club-continue ${state.pendingTeamId?'':'disabled'}>WEITER</button></div><div class="onboarding-hint">🏒 3 Drittel · 1:00 pro Drittel · Live-Simulation · Spieltagsergebnisse vor deiner Partie · Nations-Transfermarkt</div></section></div>`;
   }
 
   function render(){
@@ -953,7 +985,8 @@
   }
   function commitTeamSelection(){
     const t=state.teams[state.pendingTeamId];
-    if(!t){alert('Bitte zuerst einen Nation auswählen.');return;}
+    if(!t){toast('Nation auswählen','Bitte zuerst ein Land antippen.');return;}
+    configureActiveLeaguesForSelectedTeam(t.id);
     state.userTeamId=t.id;
     state.selectedCountry=t.country;
     state.market=generateMarket(60,t.country);
@@ -1043,21 +1076,22 @@
     return {players:{home:makeSide(H,'home',homeBases),away:makeSide(A,'away',awayBases)},ball:{x:53,y:50,side:'home',index:4,mode:'hold',sx:53,sy:50,tx:53,ty:50,start:0,duration:0},nextDecisionAt:performance.now()+900,lastCommentAt:0,action:null,phase:'kickoff'};
   }
 
-  const HALF_MS=60000, HALF_BREAK_MS=4000, TOTAL_MATCH_MS=HALF_MS*2+HALF_BREAK_MS;
+  const PERIOD_MS=60000, PERIOD_BREAK_MS=3000, TOTAL_MATCH_MS=PERIOD_MS*3+PERIOD_BREAK_MS*2;
 
   function openPreMatch(game,type){
     const H=state.teams[game.home],A=state.teams[game.away];if(!H||!A)return;const weather=pick(WEATHER),hs=Math.round(teamStrength(H)*(H.id===state.userTeamId?1.05:1)),as=Math.round(teamStrength(A));
-    openModal('SPIELVORDEREITUNG',`<div class="pregame-card"><div class="pregame-cover"><img src="assets/screens/hockey-world-cup-27.jpg" alt="EISHOCKEY WORLD CUP 27"><span>EISHOCKEY WORLD CUP 27 · MATCHDAY</span></div><div class="pregame-teams"><div><img class="club-crest" src="${crest(H)}"><strong>${esc(H.name)}</strong><small>HEIM</small><b>${hs} OVR</b></div><span>VS</span><div><img class="club-crest" src="${crest(A)}"><strong>${esc(A.name)}</strong><small>AUSWÄRTS</small><b>${as} OVR</b></div></div><div class="pregame-stats"><span>🌤️ ${weather.icon} ${weather.name}</span><span>🏟️ ${esc(game.home===H.id?H.stadium.name:A.stadium.name)}</span><span>📅 ${dateDE(state.date)} · 18:00</span></div><div class="pregame-form"><div><b>FORM</b><span>${(H.form||[]).slice(-5).join(' ')}</span></div><div><b>FORM</b><span>${(A.form||[]).slice(-5).join(' ')}</span></div></div><button class="gold-btn wide" data-start-match="${game.id}" data-start-match-type="${type}">SPIEL STARTEN · 2:00</button><p class="modal-copy">Die Partie wird live simuliert. Andere Spiele werden im Hintergrund automatisch berechnet.</p></div>`,{kicker:'MATCHDAY'});
+    openModal('SPIELVORDEREITUNG',`<div class="pregame-card"><div class="pregame-cover"><img src="assets/screens/hockey-world-cup-27.jpg" alt="EISHOCKEY WORLD CUP 27"><span>EISHOCKEY WORLD CUP 27 · MATCHDAY</span></div><div class="pregame-teams"><div><img class="club-crest" src="${crest(H)}"><strong>${esc(H.name)}</strong><small>HEIM</small><b>${hs} OVR</b></div><span>VS</span><div><img class="club-crest" src="${crest(A)}"><strong>${esc(A.name)}</strong><small>AUSWÄRTS</small><b>${as} OVR</b></div></div><div class="pregame-stats"><span>🌤️ ${weather.icon} ${weather.name}</span><span>🏟️ ${esc(game.home===H.id?H.stadium.name:A.stadium.name)}</span><span>📅 ${dateDE(state.date)} · 18:00</span></div><div class="pregame-form"><div><b>FORM</b><span>${(H.form||[]).slice(-5).join(' ')}</span></div><div><b>FORM</b><span>${(A.form||[]).slice(-5).join(' ')}</span></div></div><button class="gold-btn wide" data-start-match="${game.id}" data-start-match-type="${type}">SPIEL STARTEN · 3:00</button><p class="modal-copy">Die Partie wird live simuliert. Alle anderen Spiele des Spieltags werden jetzt zuerst automatisch simuliert und erscheinen kurz vor dem Bully.</p></div>`,{kicker:'MATCHDAY'});
   }
 
   function startLiveMatch(game,type){
+    if(type==='league') prepareLeagueMatchday(game);
     const H=state.teams[game.home], A=state.teams[game.away], weather=pick(WEATHER); if(!H||!A)return;
     state.liveMatch={
       gameId:game.id,type,home:H.id,away:A.id,hg:0,ag:0,weather,
-      started:performance.now(),elapsed:0,matchClock:0,phase:'first',
-      duration:TOTAL_MATCH_MS,halfShown:false,secondHalf:false,
+      started:performance.now(),elapsed:0,matchClock:0,phase:'first',period:1,breakShown:{},
+      duration:TOTAL_MATCH_MS,
       events:[...(Array.isArray(state.matchdayBrief)?state.matchdayBrief.map(x=>({t:0,text:x.text,kind:'round'})):[]),{t:0,text:`BULLY · ${weather.icon} ${weather.name}` ,kind:'start'}],
-      possession:50,shotsH:0,shotsA:0,cornersH:0,cornersA:0,fouls:0,
+      possession:50,shotsH:0,shotsA:0,cornersH:0,cornersA:0,penaltiesH:0,penaltiesA:0,fouls:0,powerPlay:null,
       savesH:0,savesA:0,yellowH:0,yellowA:0,
       sim:createLiveSim(H,A)
     };
@@ -1070,45 +1104,37 @@
     const lm=state.liveMatch;if(!lm)return;
     try{
       lm.elapsed=now-lm.started;
-      if(lm.elapsed>=lm.duration){
-        lm.elapsed=lm.duration;
-        lm.matchClock=120000;
-        lm.phase='second';
-        updateLiveDOM(now);
-        finishLiveMatch();
-        return;
+      const p1End=PERIOD_MS, p2End=PERIOD_MS*2+PERIOD_BREAK_MS, p3End=TOTAL_MATCH_MS;
+      if(lm.elapsed>=p3End){
+        lm.elapsed=p3End; lm.matchClock=PERIOD_MS*3; lm.phase='third'; lm.period=3;
+        updateLiveDOM(now); finishLiveMatch(); return;
       }
-      if(lm.elapsed<HALF_MS){
-        lm.matchClock=lm.elapsed;lm.phase='first';
-      }else if(lm.elapsed<HALF_MS+HALF_BREAK_MS){
-        lm.matchClock=HALF_MS;lm.phase='halftime';
-        if(!lm.halfShown){
-          lm.halfShown=true;
-          addLiveEvent(`2. PAUSE · ${lm.hg}:${lm.ag} · ${Math.round(lm.possession)}% Puckbesitz`, 'halftime');
-          showHalftimeOverlay();
-        }
-        updateLiveDOM(now);
-        window.__liveRAF=requestAnimationFrame(runLiveFrame);
-        return;
+      if(lm.elapsed<PERIOD_MS){
+        lm.matchClock=lm.elapsed;lm.phase='first';lm.period=1;
+      }else if(lm.elapsed<PERIOD_MS+PERIOD_BREAK_MS){
+        lm.matchClock=PERIOD_MS;lm.phase='break1';lm.period=1;
+        if(!lm.breakShown[1]){lm.breakShown[1]=true;addLiveEvent(`1. DRITTEL ENDE · ${lm.hg}:${lm.ag}`,'halftime');showPeriodBreakOverlay(1);}
+        updateLiveDOM(now);window.__liveRAF=requestAnimationFrame(runLiveFrame);return;
+      }else if(lm.elapsed<PERIOD_MS*2+PERIOD_BREAK_MS){
+        lm.matchClock=PERIOD_MS+(lm.elapsed-(PERIOD_MS+PERIOD_BREAK_MS));lm.phase='second';lm.period=2;hideHalftimeOverlay();
+      }else if(lm.elapsed<PERIOD_MS*2+PERIOD_BREAK_MS*2){
+        lm.matchClock=PERIOD_MS*2;lm.phase='break2';lm.period=2;
+        if(!lm.breakShown[2]){lm.breakShown[2]=true;addLiveEvent(`2. DRITTEL ENDE · ${lm.hg}:${lm.ag}`,'halftime');showPeriodBreakOverlay(2);}
+        updateLiveDOM(now);window.__liveRAF=requestAnimationFrame(runLiveFrame);return;
       }else{
-        if(!lm.secondHalf){lm.secondHalf=true;lm.phase='second';hideHalftimeOverlay();addLiveEvent('BULLY 2. 2. PAUSE · Weiter geht’s!','start');}
-        lm.matchClock=HALF_MS+(lm.elapsed-(HALF_MS+HALF_BREAK_MS));lm.phase='second';
+        if(lm.phase==='break2')hideHalftimeOverlay();
+        lm.matchClock=PERIOD_MS*2+(lm.elapsed-(PERIOD_MS*2+PERIOD_BREAK_MS*2));lm.phase='third';lm.period=3;
       }
+      if(lm.powerPlay && lm.powerPlay.until<=now){ lm.powerPlay=null; addLiveEvent('POWERPLAY ENDE · Vollzählig.','neutral'); }
       updateLiveSimulation(now);
       updateLiveDOM(now);
       window.__liveRAF=requestAnimationFrame(runLiveFrame);
     }catch(err){
       console.error('Live-Simulation Fehler:',err);
-      // Ein Fehler in der Animation darf die Partie niemals einfrieren.
-      lm.matchClock=Math.min(120000,Math.max(lm.matchClock||0,120000));
+      lm.matchClock=PERIOD_MS*3;lm.phase='third';lm.period=3;
       try{finishLiveMatch(true);}catch(finalErr){
         console.error('Live-Abpfiff Fehler:',finalErr);
-        cancelAnimationFrame(window.__liveRAF);
-        window.__liveRAF=null;
-        state.liveMatch=null;
-        saveState();
-        renderPage();
-        toast('Spiel beendet','Das Ergebnis wurde sicher gespeichert.');
+        cancelAnimationFrame(window.__liveRAF);window.__liveRAF=null;state.liveMatch=null;saveState();renderPage();toast('Spiel beendet','Das Ergebnis wurde sicher gespeichert.');
       }
     }
   }
@@ -1186,10 +1212,15 @@
     const nearSideline=b.y<7||b.y>93, nearGoal=(holder.side==='home'?b.x>88:b.x<12);
     const r=Math.random();
 
-    if(r<0.035){chooseSetPiece(lm,holder,now,'throw');return}
-    if((nearGoal||goalDist<20)&&r<0.16){chooseSetPiece(lm,holder,now,'corner');return}
-    if(r>=0.16&&r<0.21){chooseSetPiece(lm,holder,now,'free');return}
-    if(nearSideline&&r<0.33){chooseSetPiece(lm,holder,now,'throw');return}
+    if(r<0.045){
+      const side=holder.side, penaltySeconds=15000;
+      lm.powerPlay={side,until:now+penaltySeconds}; lm[side==='home'?'penaltiesH':'penaltiesA']++;
+      addLiveEvent(`STRAFZEIT · ${side==='home'?state.teams[lm.home]?.name||'Heim':state.teams[lm.away]?.name||'Gäste'} · 2 MINUTEN POWERPLAY`,'card');
+      resetForRestart(lm,otherSide(side),'faceoff',now);return;
+    }
+    if(r<0.095){ addLiveEvent(`ICING · Bully in der ${holder.side==='home'?'Heim-':'Gäste-'}Zone.`,'tackle'); resetForRestart(lm,otherSide(holder.side),'faceoff',now); return; }
+    if(r<0.135){ addLiveEvent(`ABSEITS · Bully an der blauen Linie.`,'neutral'); resetForRestart(lm,otherSide(holder.side),'faceoff',now); return; }
+    if(r<0.19){ addLiveEvent(`BULLY · Puck wird neu eingeworfen.`,'throw'); resetForRestart(lm,pick(['home','away']),'faceoff',now); return; }
 
     if(goalDist<30 && r<0.58){
       const tx=goalX===100?99:1, ty=clamp(50+(Math.random()-.5)*35,18,82);
@@ -1337,12 +1368,16 @@
     const lm=state.liveMatch,sim=lm.sim,b=sim.ball;
     if(!sim.action)return;
     const keeperH=sim.players.home?.[0], keeperA=sim.players.away?.[0];
+    if(a.type==='faceoff'){
+      const side=a.side||pick(['home','away']); const idx=side==='home'?4:4; b.mode='hold';b.side=side;b.index=idx;b.x=50;b.y=50;b.z=0;sim.nextDecisionAt=now+350+Math.random()*450;addLiveEvent(`BULLY · ${state.teams[side==='home'?lm.home:lm.away]?.name||'Team'} gewinnt den ersten Puck.`,'throw'); sim.action=null; return;
+    }
     if(a.type==='shot'){
       const keeper=otherSide(a.side)==='home'?keeperH:keeperA;
       const shooter=findSimPlayer(lm,a.side,a.index);
       const power=shooter?.rating||68;
       const distToGoal=Math.abs(currentGoalX(a.side)-b.x);
-      const onTarget=0.48+clamp((power-60)/220,-.12,.14)-distToGoal/260;
+      const powerBonus=(lm.powerPlay&&lm.powerPlay.side===a.side&&lm.powerPlay.until>now)?0.10:0;
+      const onTarget=0.48+clamp((power-60)/220,-.12,.14)-distToGoal/260+powerBonus;
       const roll=Math.random();
       if(roll<onTarget){
         const saveRoll=Math.random();
@@ -1407,16 +1442,20 @@
   }
 
   function resetForRestart(lm,side,type,now){
-    const sim=lm.sim,dir=attackDir(side);
-    if(type==='corner'){const x=dir>0?97:3,y=Math.random()<.5?7:93;sim.ball={x,y,side,index:4,mode:'hold',sx:x,sy:y,tx:x,ty:y,z:0,start:0,duration:0};addLiveEvent(`ANLAUF · ${side==='home'?'World Cup Arena':'Away Arena'} rückt auf.`,'corner');}
-    else{sim.ball={x:dir>0?12:88,y:50,side,index:0,mode:'hold',sx:dir>0?12:88,sy:50,tx:dir>0?12:88,ty:50,z:0,start:0,duration:0};}
+    const sim=lm.sim;
+    if(type==='faceoff'){
+      sim.action={type:'faceoff',side,index:4,start:now,duration:420};
+      sim.ball={x:50,y:50,side,index:4,mode:'faceoff',sx:50,sy:50,tx:50,ty:50,z:.1,start:now,duration:420};
+    }else{
+      sim.ball={x:50,y:50,side,index:4,mode:'hold',sx:50,sy:50,tx:50,ty:50,z:0,start:0,duration:0};
+    }
     sim.nextDecisionAt=now+650+Math.random()*700;
   }
   function resetAfterGoal(scoringSide){
     const lm=state.liveMatch,sim=lm.sim,side=otherSide(scoringSide),homeBases=[[8,50],[27,30],[27,70],[46,34],[50,55]],awayBases=[[92,50],[73,70],[73,30],[54,66],[50,45]];
     sim.players.home.forEach((p,i)=>{p.x=homeBases[i][0];p.y=homeBases[i][1]});
     sim.players.away.forEach((p,i)=>{p.x=awayBases[i][0];p.y=awayBases[i][1]});
-    sim.ball={x:side==='home'?50:50,y:50,side,index:4,mode:'hold',sx:50,sy:50,tx:50,ty:50,z:0,start:0,duration:0};sim.nextDecisionAt=performance.now()+1100;
+    sim.ball={x:50,y:50,side,index:4,mode:'hold',sx:50,sy:50,tx:50,ty:50,z:0,start:0,duration:0};sim.nextDecisionAt=performance.now()+1100;
   }
   function celebrateGoal(lm,side,now){
     const players=lm.sim.players[side]||[];
@@ -1428,7 +1467,7 @@
     const lm=state.liveMatch,H=state.teams[lm.home],A=state.teams[lm.away];
     const makePlayers=(side,team)=>lm.sim.players[side].map((p,i)=>`<div class="live-player ${side}" data-side="${side}" data-index="${i}"><img src="${playerAvatar(p,team.teamColor,true)}" alt=""><b>${esc(p.name.split(' ')[0])}</b></div>`).join('');
     openModal('LIVE-SPIEL',`
-      <div class="live-score"><div><img class="club-crest" src="${crest(H)}" alt=""><strong>${esc(H.name)}</strong></div><div><span class="live-time" id="liveTime">00:00</span><b id="liveScore">0 : 0</b><small id="liveHalfLabel">${esc(lm.weather.name)} · 1. HZ</small></div><div><img class="club-crest" src="${crest(A)}" alt=""><strong>${esc(A.name)}</strong></div></div>
+      <div class="live-score"><div><img class="club-crest" src="${crest(H)}" alt=""><strong>${esc(H.name)}</strong></div><div><span class="live-time" id="liveTime">00:00</span><b id="liveScore">0 : 0</b><small id="liveHalfLabel">${esc(lm.weather.name)} · 1. DRITTEL</small></div><div><img class="club-crest" src="${crest(A)}" alt=""><strong>${esc(A.name)}</strong></div></div>
       <div class="live-action-banner" id="liveActionBanner"><span id="liveActionLabel">BULLY</span><small id="liveActionText">Der Ball rollt.</small></div>
       <div class="live-field-wrap">
         <div class="live-field" id="liveField">
@@ -1440,41 +1479,43 @@
         </div>
         <div class="live-minimap" id="liveMinimap"></div>
       </div>
-      <div class="live-stat-row"><span>Puckbesitz <b id="livePoss">50% · 50%</b></span><span>Schüsse <b id="liveShots">0 · 0</b></span><span>Powerplays <b id="liveCorners">0 · 0</b></span></div>
+      <div class="live-stat-row"><span>Puckbesitz <b id="livePoss">50% · 50%</b></span><span>Schüsse <b id="liveShots">0 · 0</b></span><span>Strafzeiten <b id="liveCorners">0 · 0</b></span></div>
       <div class="live-feed" id="liveFeed">${lm.events.map(e=>`<article class="event ${e.kind}"><small>0:00</small><span>${esc(e.text)}</span></article>`).join('')}</div>
-      <div class="live-progress"><div><span id="livePhaseText">1. 2. PAUSE · ECHTZEIT</span><b id="liveRemaining">01:00</b></div><i><em id="liveBar"></em></i></div>
+      <div class="live-progress"><div><span id="livePhaseText">1. DRITTEL · ECHTZEIT</span><b id="liveRemaining">01:00</b></div><i><em id="liveBar"></em></i></div>
       <div class="halftime-overlay" id="halfTimeOverlay" aria-hidden="true">
-        <div class="halftime-box"><div class="halftime-title">2. PAUSE</div><div class="halftime-score"><span>${esc(H.name)}</span><strong id="halfScore">0 : 0</strong><span>${esc(A.name)}</span></div>
-        <div class="halftime-stats"><span><b id="halfPossH">50%</b><small>Puckbesitz</small><b id="halfPossA">50%</b></span><span><b id="halfShotsH">0</b><small>Schüsse</small><b id="halfShotsA">0</b></span><span><b id="halfCornersH">0</b><small>Powerplays</small><b id="halfCornersA">0</b></span></div><p>Kurze Pause · Taktik wird neu sortiert …</p></div>
+        <div class="halftime-box"><div class="halftime-title">1. DRITTEL ENDE</div><div class="halftime-score"><span>${esc(H.name)}</span><strong id="halfScore">0 : 0</strong><span>${esc(A.name)}</span></div>
+        <div class="halftime-stats"><span><b id="halfPossH">50%</b><small>Puckbesitz</small><b id="halfPossA">50%</b></span><span><b id="halfShotsH">0</b><small>Schüsse</small><b id="halfShotsA">0</b></span><span><b id="halfCornersH">0</b><small>Strafzeiten</small><b id="halfCornersA">0</b></span></div><p>Kurze Pause · Taktik wird neu sortiert …</p></div>
       </div>
     </div>`,{lock:true,full:true,kicker:'VORRWAND · LIVEBEOBACHTUNG'});
     updateLiveDOM();
   }
 
-  function showHalftimeOverlay(){
+  function showPeriodBreakOverlay(period){
     const lm=state.liveMatch;if(!lm)return;const o=$('#halfTimeOverlay');if(!o)return;
     o.classList.add('show');o.setAttribute('aria-hidden','false');
     const h=Math.round(lm.possession),a=100-h;
-    $('#halfScore')&&( $('#halfScore').textContent=`${lm.hg} : ${lm.ag}` );
-    $('#halfPossH')&&( $('#halfPossH').textContent=`${h}%` ); $('#halfPossA')&&( $('#halfPossA').textContent=`${a}%` );
-    $('#halfShotsH')&&( $('#halfShotsH').textContent=lm.shotsH ); $('#halfShotsA')&&( $('#halfShotsA').textContent=lm.shotsA );
-    $('#halfCornersH')&&( $('#halfCornersH').textContent=lm.cornersH ); $('#halfCornersA')&&( $('#halfCornersA').textContent=lm.cornersA );
+    $('#halfScore')&&($('#halfScore').textContent=`${lm.hg} : ${lm.ag}`);
+    $('#halfPossH')&&($('#halfPossH').textContent=`${h}%`);$('#halfPossA')&&($('#halfPossA').textContent=`${a}%`);
+    $('#halfShotsH')&&($('#halfShotsH').textContent=lm.shotsH);$('#halfShotsA')&&($('#halfShotsA').textContent=lm.shotsA);
+    $('#halfCornersH')&&($('#halfCornersH').textContent=lm.penaltiesH||0);$('#halfCornersA')&&($('#halfCornersA').textContent=lm.penaltiesA||0);
+    const title=$('.halftime-title');if(title)title.textContent=`${period}. DRITTEL ENDE`;
+    const p=$('.halftime-box p');if(p)p.textContent=`Kurze Pause · Gleich startet das ${period+1}. Drittel.`;
   }
   function hideHalftimeOverlay(){const o=$('#halfTimeOverlay');if(o){o.classList.remove('show');o.setAttribute('aria-hidden','true');}}
   function updateLiveFeedOnly(){const feed=$('#liveFeed'),lm=state.liveMatch;if(feed&&lm)feed.innerHTML=lm.events.map(e=>`<article class="event ${e.kind}"><small>${Math.floor(e.t/60)}:${String(e.t%60).padStart(2,'0')}</small><span>${esc(e.text)}</span></article>`).join('');}
   function updateLiveDOM(){
     const lm=state.liveMatch;if(!lm)return;
-    const left=Math.max(0,120000-lm.matchClock);
+    const left=Math.max(0,PERIOD_MS*3-lm.matchClock);
     const time=$('#liveTime'),score=$('#liveScore'),rem=$('#liveRemaining'),bar=$('#liveBar'),poss=$('#livePoss'),shots=$('#liveShots'),corners=$('#liveCorners');
     if(time)time.textContent=liveClock(lm.matchClock);
     if(score)score.textContent=`${lm.hg} : ${lm.ag}`;
     if(rem)rem.textContent=lm.phase==='halftime'?'PAUSE':liveClock(left);
-    if(bar)bar.style.width=`${clamp(lm.matchClock/120000*100,0,100)}%`;
+    if(bar)bar.style.width=`${clamp(lm.matchClock/(PERIOD_MS*3)*100,0,100)}%`;
     if(poss)poss.textContent=`${Math.round(lm.possession)}% · ${100-Math.round(lm.possession)}%`;
     if(shots)shots.textContent=`${lm.shotsH} · ${lm.shotsA}`;
     if(corners)corners.textContent=`${lm.cornersH} · ${lm.cornersA}`;
-    const half=$('#liveHalfLabel'); if(half)half.textContent=`${esc(lm.weather.name)} · ${lm.phase==='second'?'2. HZ':lm.phase==='halftime'?'2. PAUSE':'1. HZ'}`;
-    const phase=$('#livePhaseText'); if(phase)phase.textContent=lm.phase==='second'?'2. 2. PAUSE · ECHTZEIT':lm.phase==='halftime'?'2. PAUSE':'1. 2. PAUSE · ECHTZEIT';
+    const half=$('#liveHalfLabel'); if(half)half.textContent=`${esc(lm.weather.name)} · ${lm.phase==='third'?'3. DRITTEL':lm.phase==='second'?'2. DRITTEL':(lm.phase==='break1'||lm.phase==='break2')?`${lm.period}. DRITTEL ENDE`:'1. DRITTEL'}`;
+    const phase=$('#livePhaseText'); if(phase)phase.textContent=(lm.phase==='third'?'3. DRITTEL · ECHTZEIT':lm.phase==='second'?'2. DRITTEL · ECHTZEIT':(lm.phase==='break1'||lm.phase==='break2')?`${lm.period}. DRITTEL · PAUSE`:'1. DRITTEL · ECHTZEIT');
     ['home','away'].forEach(side=>lm.sim.players[side].forEach((p,i)=>{const el=$(`.live-player[data-side="${side}"][data-index="${i}"]`);if(el){el.style.left=`${p.x}%`;el.style.top=`${p.y}%`;el.classList.toggle('active',side===lm.sim.ball.side&&i===lm.sim.ball.index);if(p.celebrate&&performance.now()-p.celebrate<1000)el.classList.add('celebrate');else el.classList.remove('celebrate')}}));
     const b=lm.sim.ball,ball=$('#liveBall');
     if(ball){ball.style.left=`${b.x}%`;ball.style.top=`${b.y}%`;ball.style.setProperty('--ballZ',String(b.z||0));ball.classList.toggle('in-flight',b.mode!=='hold');}
@@ -1637,7 +1678,7 @@
   function sellPlayer(id){const t=currentTeam(),idx=t.roster.findIndex(p=>p.id===id);if(idx<5||idx<0){toast('Starter geschützt','Verkaufe zuerst einen Bankspieler.');return;}const p=t.roster[idx],val=Math.round(p.value*.72);t.roster.splice(idx,1);t.budget+=val;saveState();renderPage();toast('Spieler verkauft',`${p.name} · +${money(val)}`);}
 
   function draft(type){
-    const cfg={silver:{cost:800000,n:2,min:50,max:70,choices:1},gold:{cost:2000000,n:3,min:72,max:78,choices:1},premium:{cost:5000000,n:6,min:78,max:96,choices:3}}[type];const t=currentTeam();if(!cfg)return;const free=type==='gold'&&!state.freeGoldDraftUsed;if(state.gamesSinceDraft<5&&state.draftHistory.length>0){toast('Draft noch nicht bereit',`Noch ${5-state.gamesSinceDraft} Spiele.`);return;}if(!free&&t.budget<cfg.cost){toast('Draft nicht möglich','Budget reicht nicht.');return;}if(!free)t.budget-=cfg.cost;if(free)state.freeGoldDraftUsed=true;const p=[];for(let i=0;i<cfg.n;i++){const q=makePlayer(500+i,t.teamColor,pick(['G','LD','LD','RD','C','LW','RW','RW']),cfg.min+Math.random()*(cfg.max-cfg.min));q.draftTier=type;p.push(q);}state._draftPlayers=p;state._draftChoicesLeft=cfg.choices;state.draftHistory.unshift({type,cost:free?0:cfg.cost,date:new Date().toISOString(),count:cfg.n});state.gamesSinceDraft=0;saveState();openModal(`DRAFT · ${type.toUpperCase()}`,`<p class="modal-copy">Wähle bis zu <b>${cfg.choices}</b> Spieler. Du kannst die Auswahl einzeln übernehmen.</p><div class="draft-candidate-grid">${p.map((x,i)=>`<article class="draft-pick"><img src="${playerAvatar(x,t.teamColor,true)}"><div><strong>${esc(x.name)}</strong><span>${marketLabel(x.pos)} · ${x.rating} OVR</span><small>${money(x.value)} · ${esc(x.bio)}</small></div><button class="small-btn gold" data-draft-index="${i}">NEHMEN</button></article>`).join('')}</div>`,{kicker:free?'GOLD · EINMALIG GRATIS':'NATIONS DRAFT'});}
+    const cfg={silver:{cost:800000,n:2,min:50,max:70,choices:1},gold:{cost:2000000,n:3,min:72,max:78,choices:1},premium:{cost:5000000,n:6,min:78,max:96,choices:3}}[type];const t=currentTeam();if(!cfg)return;const free=type==='gold'&&!state.freeGoldDraftUsed;if(state.gamesSinceDraft<5&&state.draftHistory.length>0){toast('Draft noch nicht bereit',`Noch ${5-state.gamesSinceDraft} Spiele.`);return;}if(!free&&t.budget<cfg.cost){toast('Draft nicht möglich','Budget reicht nicht.');return;}if(!free)t.budget-=cfg.cost;if(free)state.freeGoldDraftUsed=true;const p=[];for(let i=0;i<cfg.n;i++){const q=makePlayer(500+i,t.teamColor,pick(['G','LD','LD','RD','C','LW','RW','RW']),cfg.min+Math.random()*(cfg.max-cfg.min));q.draftTier=type;q.nationality=t.country||state.selectedCountry||'Deutschland';q.countryCode=t.countryCode||'';q.bio=`Fiktives Nachwuchstalent aus ${q.nationality}. ${q.bio||''}`;p.push(q);}state._draftPlayers=p;state._draftChoicesLeft=cfg.choices;state.draftHistory.unshift({type,cost:free?0:cfg.cost,date:new Date().toISOString(),count:cfg.n});state.gamesSinceDraft=0;saveState();openModal(`DRAFT · ${type.toUpperCase()}`,`<p class="modal-copy">Wähle bis zu <b>${cfg.choices}</b> Spieler. Du kannst die Auswahl einzeln übernehmen.</p><div class="draft-candidate-grid">${p.map((x,i)=>`<article class="draft-pick"><img src="${playerAvatar(x,t.teamColor,true)}"><div><strong>${esc(x.name)}</strong><span>${marketLabel(x.pos)} · ${x.rating} OVR</span><small>${money(x.value)} · ${esc(x.bio)}</small></div><button class="small-btn gold" data-draft-index="${i}">NEHMEN</button></article>`).join('')}</div>`,{kicker:free?'GOLD · EINMALIG GRATIS':'NATIONS DRAFT'});}
 
   function renderCurrentDraftModal(){
     const t=currentTeam(),p=state._draftPlayers||[],left=state._draftChoicesLeft||0;
@@ -1770,7 +1811,11 @@
   function go(page){state.active=page;window.scrollTo({top:0,behavior:'smooth'});renderPage();}
 
   function handleInput(e){
-    const r=e.target?.dataset?.range;if(r){state.tactics[r]=Number(e.target.value);const b=e.target.parentElement?.querySelector('label b');if(b)b.textContent=state.tactics[r];saveState();}
+    const r=e.target?.dataset?.range;if(r){state.tactics[r]=Number(e.target.value);const b=e.target.parentElement?.querySelector('label b');if(b)b.textContent=state.tactics[r];saveState();return;}
+    if(e.target?.id==='nationSearch'){
+      const q=e.target.value.trim().toLocaleLowerCase('de-DE');
+      $$('.team-select-card').forEach(el=>{const text=el.textContent.toLocaleLowerCase('de-DE');el.style.display=!q||text.includes(q)?'grid':'none';});
+    }
   }
 
   function handleClick(e){
@@ -1801,7 +1846,7 @@
     else if(el.dataset.confirmRenew)confirmRenewContract(el.dataset.confirmRenew);
     else if(el.dataset.acceptRenewCounter)acceptRenewCounter(el.dataset.acceptRenewCounter);
     else if(el.dataset.teamOverview)openTeamOverview(el.dataset.teamOverview);
-    else if(el.dataset.startMatch){const g=findGame(el.dataset.startMatch,el.dataset.startMatchType||'league');if(g)startLiveMatch(g,el.dataset.startMatchType||'league');}
+    else if(el.dataset.startMatch){const typ=el.dataset.startMatchType||'league';const g=findGame(el.dataset.startMatch,typ);if(g){if(typ==='league')prepareLeagueMatchday(g);startLiveMatch(g,typ);}}
     else if(el.dataset.calendarLeague){state.calendarLeague=el.dataset.calendarLeague;renderPage();}
     else if(el.dataset.repayCredit)repayCredit();
     else if(el.dataset.watch){const p=state.market.find(x=>x.id===el.dataset.watch);if(p){p.watch=!p.watch;saveState();renderPage();}}
