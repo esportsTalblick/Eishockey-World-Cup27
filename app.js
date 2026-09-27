@@ -955,6 +955,19 @@ const EXTRA_NAME_POOLS = {"Afghanistan":[["Breanna","Denise","Randy","Kevin","Br
     $$('.team-select-card').forEach(el=>activate(el,()=>choosePendingTeam(el.dataset.selectTeam)));
     $$('[data-club-continue]').forEach(el=>activate(el,()=>commitTeamSelection()));
     $$('[data-new-game-flow],[data-reset],[data-confirm-reset]').forEach(el=>activate(el,()=>startNewGameFlow()));
+    $$('[data-start-match]').forEach(el=>activate(el,()=>{
+      const typ=el.dataset.startMatchType||'league';
+      const g=findGame(el.dataset.startMatch,typ);
+      if(!g){ toast('Spiel nicht gefunden','Die Partie konnte nicht geladen werden.'); return; }
+      try{
+        if(typ==='league') prepareLeagueMatchday(g);
+        startLiveMatch(g,typ);
+      }catch(err){
+        console.error('Start Match Fehler:',err);
+        toast('Spiel konnte nicht starten','Bitte erneut auf SPIEL STARTEN tippen.');
+      }
+    }));
+    $$('[data-simulate]').forEach(el=>activate(el,()=>simulateButton()));
     $$('[data-close],.close-btn').forEach(el=>activate(el,()=>closeModal()));
   }
 
@@ -1846,7 +1859,12 @@ const EXTRA_NAME_POOLS = {"Afghanistan":[["Breanna","Denise","Randy","Kevin","Br
     else if(el.dataset.confirmRenew)confirmRenewContract(el.dataset.confirmRenew);
     else if(el.dataset.acceptRenewCounter)acceptRenewCounter(el.dataset.acceptRenewCounter);
     else if(el.dataset.teamOverview)openTeamOverview(el.dataset.teamOverview);
-    else if(el.dataset.startMatch){const typ=el.dataset.startMatchType||'league';const g=findGame(el.dataset.startMatch,typ);if(g){if(typ==='league')prepareLeagueMatchday(g);startLiveMatch(g,typ);}}
+    else if(el.dataset.startMatch){
+      const typ=el.dataset.startMatchType||'league';
+      const g=findGame(el.dataset.startMatch,typ);
+      if(!g){toast('Spiel nicht gefunden','Die Partie konnte nicht geladen werden.');return;}
+      try{if(typ==='league')prepareLeagueMatchday(g);startLiveMatch(g,typ);}catch(err){console.error('Start Match Fehler:',err);toast('Spiel konnte nicht starten','Technischer Fehler beim Start.');}
+    }
     else if(el.dataset.calendarLeague){state.calendarLeague=el.dataset.calendarLeague;renderPage();}
     else if(el.dataset.repayCredit)repayCredit();
     else if(el.dataset.watch){const p=state.market.find(x=>x.id===el.dataset.watch);if(p){p.watch=!p.watch;saveState();renderPage();}}
