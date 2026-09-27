@@ -12,7 +12,7 @@
   'use strict';
 
   const APP_KEY = 'hockeyWorldCup27SaveV5';
-  const APP_VERSION = '5.0.0';
+  const APP_VERSION = '6.0.0';
   const WEEKLY_RESET_KEY = 'hockeyWorldCup27WeeklyResetV1';
   const LEGACY_KEYS = ['hockeyWorldCup27SaveV3','hockeyWorldCup27SaveV2','hockeyWorldCup27SaveV1','streetKingsSaveV15','streetKingsSaveV14','streetKingsSaveV13','streetKingsSaveV12','streetKingsSaveV11','streetKingsSaveV10','streetKingsSaveV9','streetKingsSaveV8','streetKingsSaveV7','streetKingsSaveV6','streetKingsSaveV5','streetKingsSaveV4','streetKingsSaveV3','streetKingsSaveV2','streetKingsSave'];
   const $ = (s, r = document) => r.querySelector(s);
@@ -1083,38 +1083,187 @@ const EXTRA_NAME_POOLS = {"Afghanistan":[["Breanna","Denise","Randy","Kevin","Br
   const PERIOD_MS=60000, PERIOD_BREAK_MS=3000, TOTAL_MATCH_MS=PERIOD_MS*3+PERIOD_BREAK_MS*2;
 
   function launchLiveMatch(game,type='league'){
-    if(state.liveMatch){
-      toast('Live-Spiel läuft bereits','Die aktuelle Partie ist noch aktiv.');
-      return;
-    }
-    if(!game || !game.id){
-      toast('Kein Spiel gewählt','Bitte wähle zuerst eine Partie aus.');
-      return;
-    }
+    if(window.__robustLiveTimer){ clearInterval(window.__robustLiveTimer); window.__robustLiveTimer=null; }
+    if(state.liveMatch){ toast('Live-Spiel läuft bereits','Die aktuelle Partie ist noch aktiv.'); return; }
+    if(!game || !game.id){ toast('Kein Spiel gewählt','Bitte wähle zuerst eine Partie aus.'); return; }
     const H=state.teams?.[game.home], A=state.teams?.[game.away];
-    if(!H || !A){
-      toast('Spiel konnte nicht geladen werden','Heim- oder Auswärtsteam fehlt.');
-      return;
-    }
+    if(!H || !A){ toast('Spiel konnte nicht geladen werden','Heim- oder Auswärtsteam fehlt.'); return; }
+
+    // Matchday zuerst vorbereiten: ALLE anderen Partien des Spieltags werden
+    // abgeschlossen und in die Tabelle geschrieben. Erst danach startet die eigene Live-Partie.
     try{
       closeModal();
-    }catch(_){ }
-    setTimeout(()=>{
-      try{
-        if(type==='league') prepareLeagueMatchday(game);
-        startLiveMatch(game,type);
-      }catch(err){
-        console.error('Live-Spiel Startfehler:',err);
-        state.liveMatch=null;
-        saveState();
-        toast('Live-Spiel konnte nicht starten','Bitte erneut versuchen.');
-      }
-    },60);
+      if(type==='league') prepareLeagueMatchday(game);
+      startRobustHockeyLive(game,type);
+    }catch(err){
+      console.error('Robuste Live-Partie konnte nicht starten:',err);
+      state.liveMatch=null;
+      try{ saveState(); }catch(_){ }
+      toast('Live-Spiel konnte nicht starten','Bitte die Partie erneut öffnen.');
+    }
   }
 
   function openPreMatch(game,type){
     const H=state.teams[game.home],A=state.teams[game.away];if(!H||!A)return;const weather=pick(WEATHER),hs=Math.round(teamStrength(H)*(H.id===state.userTeamId?1.05:1)),as=Math.round(teamStrength(A));
     openModal('SPIELVORDEREITUNG',`<div class="pregame-card"><div class="pregame-cover"><img src="assets/screens/hockey-world-cup-27.jpg" alt="EISHOCKEY WORLD CUP 27"><span>EISHOCKEY WORLD CUP 27 · MATCHDAY</span></div><div class="pregame-teams"><div><img class="club-crest" src="${crest(H)}"><strong>${esc(H.name)}</strong><small>HEIM</small><b>${hs} OVR</b></div><span>VS</span><div><img class="club-crest" src="${crest(A)}"><strong>${esc(A.name)}</strong><small>AUSWÄRTS</small><b>${as} OVR</b></div></div><div class="pregame-stats"><span>🌤️ ${weather.icon} ${weather.name}</span><span>🏟️ ${esc(game.home===H.id?H.stadium.name:A.stadium.name)}</span><span>📅 ${dateDE(state.date)} · 18:00</span></div><div class="pregame-form"><div><b>FORM</b><span>${(H.form||[]).slice(-5).join(' ')}</span></div><div><b>FORM</b><span>${(A.form||[]).slice(-5).join(' ')}</span></div></div><button class="gold-btn wide" data-start-match="${game.id}" data-start-match-type="${type}">SPIEL STARTEN · 3:00</button><p class="modal-copy">Die Partie wird live simuliert. Alle anderen Spiele des Spieltags werden jetzt zuerst automatisch simuliert und erscheinen kurz vor dem Bully.</p></div>`,{kicker:'MATCHDAY'});
+  }
+
+  // ---------------------------------------------------------------------------
+  // ROBUSTE LIVE-SIMULATION V6
+  // Eigenständige Hockey-Live-Engine: 3 x 60 Sekunden + kurze Pausen.
+  // Sie verwendet setInterval + absolute Uhrzeit statt RAF, damit iPhone/Safari
+  // nicht an einem einzelnen Frame hängen bleibt.
+  // ---------------------------------------------------------------------------
+  const ROBUST_PERIOD_MS = 60000;
+  const ROBUST_BREAK_MS = 2000;
+  const ROBUST_TOTAL_MS = ROBUST_PERIOD_MS*3 + ROBUST_BREAK_MS*2;
+
+  function robustNames(team){
+    return (team?.roster||[]).slice(0,6).map((p,i)=>({id:p.id,name:p.name||`Spieler ${i+1}`,rating:Number(p.rating||65),i}));
+  }
+
+  function startRobustHockeyLive(game,type){
+    const H=state.teams[game.home], A=state.teams[game.away];
+    if(!H||!A) throw new Error('Teams der Partie fehlen');
+    const weather=pick(WEATHER);
+    state.liveMatch={
+      engine:'robust-v6',gameId:game.id,type,home:H.id,away:A.id,
+      hg:0,ag:0,weather,period:1,clockMs:0,phase:'first',startedAt:Date.now(),
+      lastTick:Date.now(),nextEventMs:2500+Math.random()*3000,
+      shotsH:0,shotsA:0,savesH:0,savesA:0,penaltiesH:0,penaltiesA:0,
+      possession:50,events:(Array.isArray(state.matchdayBrief)?state.matchdayBrief.map(x=>({clock:0,text:x.text,kind:'round'})):[]),
+      ended:false,scorerIds:[]
+    };
+    renderRobustHockeyLive();
+    if(window.__robustLiveTimer) clearInterval(window.__robustLiveTimer);
+    window.__robustLiveTimer=setInterval(()=>tickRobustHockeyLive(),200);
+    tickRobustHockeyLive();
+  }
+
+  function robustClockText(ms){
+    const sec=Math.max(0,Math.floor(ms/1000));
+    return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+  }
+
+  function renderRobustHockeyLive(){
+    const lm=state.liveMatch;if(!lm)return;
+    const H=state.teams[lm.home],A=state.teams[lm.away];
+    const cover='assets/screens/hockey-world-cup-27.jpg';
+    const mkSkaters=(team,side)=>robustNames(team).map((p,i)=>`<div class="hockey-skater ${side}" data-hskater="${side}-${i}" style="--i:${i}"><span>${esc(p.name.split(' ')[0])}</span></div>`).join('');
+    openModal('LIVE-SPIEL',`<style>
+      .robust-live{display:flex;flex-direction:column;gap:10px;max-height:calc(100dvh - 90px);min-height:0}
+      .robust-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;background:#071018;border:1px solid #263746;border-radius:14px;padding:10px}
+      .robust-team{display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;font-size:11px}
+      .robust-team img{width:42px;height:42px;object-fit:contain}.robust-team b{font-size:11px}
+      .robust-score{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:84px}.robust-clock{font:700 24px monospace}.robust-result{font:800 24px monospace}.robust-period{font-size:10px;opacity:.75;text-transform:uppercase}
+      .robust-banner{display:flex;justify-content:space-between;gap:10px;background:#0e1822;border-radius:10px;padding:9px 11px;border-left:4px solid #f4d03f;font-size:11px}.robust-banner b{white-space:nowrap}
+      .robust-rink{position:relative;height:230px;border-radius:18px;overflow:hidden;background:linear-gradient(90deg,#eefbff,#dceef7,#eefbff);border:3px solid #f6f9fb;box-shadow:inset 0 0 0 2px rgba(12,41,60,.28),0 10px 25px rgba(0,0,0,.25)}
+      .robust-rink:before{content:"";position:absolute;top:0;bottom:0;left:50%;width:3px;background:#d64045;transform:translateX(-50%)}
+      .robust-rink:after{content:"";position:absolute;left:16%;right:16%;top:50%;height:3px;background:rgba(38,92,183,.9);transform:translateY(-50%);box-shadow:0 -76px 0 rgba(38,92,183,.9),0 76px 0 rgba(38,92,183,.9)}
+      .robust-face{position:absolute;width:44px;height:44px;border:3px solid #d84b52;border-radius:50%;top:50%;transform:translateY(-50%);opacity:.8}.robust-face.left{left:15%}.robust-face.right{right:15%;border-color:#2d79be}.robust-circle{position:absolute;left:50%;top:50%;width:58px;height:58px;border:3px solid rgba(28,89,169,.8);border-radius:50%;transform:translate(-50%,-50%)}
+      .robust-net{position:absolute;top:29%;bottom:29%;width:9px;background:#d64c58;border:2px solid #fff;border-radius:3px}.robust-net.left{left:5px}.robust-net.right{right:5px}
+      .hockey-skater{position:absolute;width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 7px rgba(0,0,0,.28);z-index:3;transform:translate(-50%,-50%);transition:left .18s linear,top .18s linear;background:#111827}
+      .hockey-skater:before{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--team,#3b82f6)}.hockey-skater.home{--team:#2f7df4}.hockey-skater.away{--team:#d83b4f}.hockey-skater span{position:absolute;top:30px;left:50%;transform:translateX(-50%);font-size:8px;white-space:nowrap;color:#0b1720;background:rgba(255,255,255,.76);padding:1px 4px;border-radius:4px;max-width:58px;overflow:hidden;text-overflow:ellipsis}.robust-puck{position:absolute;width:10px;height:10px;border-radius:50%;background:#141414;border:1px solid #fff;z-index:5;transform:translate(-50%,-50%);box-shadow:0 0 7px rgba(0,0,0,.45);transition:left .18s linear,top .18s linear}.robust-puck.pulse{box-shadow:0 0 0 7px rgba(244,208,63,.16),0 0 10px rgba(0,0,0,.5)}
+      .robust-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.robust-stat{background:#0e1822;border:1px solid #233340;border-radius:9px;padding:7px;text-align:center}.robust-stat span{display:block;font-size:8px;opacity:.62}.robust-stat b{font-size:12px}
+      .robust-ticker{background:#080f15;border:1px solid #233340;border-radius:12px;padding:8px;height:145px;overflow:auto}.robust-ticker h4{margin:0 0 7px;font-size:10px;letter-spacing:.08em;color:#f4d03f}.robust-item{display:flex;gap:8px;font-size:10px;padding:5px 0;border-top:1px solid rgba(255,255,255,.06)}.robust-item:first-child{border-top:0}.robust-item time{opacity:.55;min-width:38px}.robust-item.goal{color:#f4d03f;font-weight:800}.robust-item.round{color:#7dd3fc}.robust-break{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(3,10,16,.78);backdrop-filter:blur(4px);z-index:8;opacity:0;pointer-events:none;transition:opacity .2s}.robust-break.show{opacity:1;pointer-events:auto}.robust-break-card{background:#0b141d;border:1px solid #344b5d;border-radius:16px;padding:20px;text-align:center;width:min(82%,340px)}.robust-break-card b{display:block;font-size:18px}.robust-break-card span{display:block;margin-top:7px;opacity:.7;font-size:11px}
+    </style>
+    <div class="robust-live">
+      <div class="robust-top"><div class="robust-team"><img src="${crest(H)}" alt=""><b>${esc(H.name)}</b><span>HEIM</span></div><div class="robust-score"><span class="robust-clock" id="rClock">00:00</span><strong class="robust-result" id="rScore">0 : 0</strong><span class="robust-period" id="rPeriod">1. DRITTEL</span></div><div class="robust-team"><img src="${crest(A)}" alt=""><b>${esc(A.name)}</b><span>AUSWÄRTS</span></div></div>
+      <div class="robust-banner"><b id="rAction">BULLY</b><span id="rActionText">${esc(lm.weather.name)} · Die Partie läuft.</span></div>
+      <div class="robust-rink" id="rRink"><div class="robust-net left"></div><div class="robust-net right"></div><div class="robust-face left"></div><div class="robust-face right"></div><div class="robust-circle"></div>${mkSkaters(H,'home')}${mkSkaters(A,'away')}<div class="robust-puck" id="rPuck"></div><div class="robust-break" id="rBreak"><div class="robust-break-card"><b id="rBreakTitle">1. DRITTEL ENDE</b><span id="rBreakText">Kurze Pause. Das nächste Drittel startet automatisch.</span></div></div></div>
+      <div class="robust-stats"><div class="robust-stat"><span>SCHÜSSE</span><b id="rShots">0 : 0</b></div><div class="robust-stat"><span>SAVES</span><b id="rSaves">0 : 0</b></div><div class="robust-stat"><span>STRAFZEITEN</span><b id="rPen">0 : 0</b></div><div class="robust-stat"><span>PUCKBESITZ</span><b id="rPoss">50% : 50%</b></div></div>
+      <div class="robust-ticker"><h4>LIVE-TICKER</h4><div id="rTicker"></div></div>
+      <div class="live-progress"><div><span>SPIELFORTSCHRITT</span><b id="rRemain">03:00</b></div><i><em id="rBar"></em></i></div>
+    </div>`,{lock:true,full:true,kicker:'LIVE · 3 DRITTEL · 1:00 PRO DRITTEL'});
+    updateRobustLiveDOM();
+  }
+
+  function robustAddEvent(text,kind='normal'){
+    const lm=state.liveMatch;if(!lm)return;
+    lm.events.unshift({clock:lm.clockMs||0,text,kind});lm.events=lm.events.slice(0,24);
+    const ticker=$('#rTicker');if(ticker)ticker.innerHTML=lm.events.map(e=>`<div class="robust-item ${e.kind}"><time>${robustClockText(e.clock||0)}</time><span>${esc(e.text)}</span></div>`).join('');
+    const a=$('#rAction'),at=$('#rActionText');if(a)a.textContent=kind==='goal'?'TOR!':kind==='penalty'?'STRAFE':kind==='shot'?'SCHUSS':kind==='save'?'SAVE':'LIVE';if(at)at.textContent=text;
+  }
+
+  function robustGenerateEvent(now){
+    const lm=state.liveMatch;if(!lm||lm.ended)return;
+    const H=state.teams[lm.home],A=state.teams[lm.away];
+    const hs=teamStrength(H),as=teamStrength(A),sum=Math.max(1,hs+as);const homeBoost=H.id===state.userTeamId?1.05:1;
+    const roll=Math.random();
+    if(roll<0.47){
+      const side=(Math.random()<(hs*homeBoost)/((hs*homeBoost)+as))?'home':'away';
+      const key=side==='home'?'shotsH':'shotsA';lm[key]++;
+      const shooterTeam=side==='home'?H:A;const roster=robustNames(shooterTeam);const shooter=roster[Math.floor(Math.random()*Math.max(1,roster.length))];
+      if(Math.random()<0.28){lm[side==='home'?'savesA':'savesH']++;robustAddEvent(`PARADE! ${shooter?.name||'Der Schütze'} scheitert am Keeper.`,'save');}
+      else {const attackStrength=(side==='home'?hs:as)/100;const chance=.10+attackStrength*.16;if(Math.random()<chance){if(side==='home')lm.hg++;else lm.ag++;if(shooter){const real=shooterTeam.roster.find(p=>p.id===shooter.id);if(real){real.goals=(real.goals||0)+1;real.form=clamp((real.form||70)+2,50,100);}}robustAddEvent(`TOOOR! ${shooter?.name||'Angreifer'} trifft · ${lm.hg}:${lm.ag}`,'goal');}else robustAddEvent(`SCHUSS! ${shooter?.name||'Angreifer'} zieht ab – knapp vorbei.`,'shot');}
+    }else if(roll<0.61){
+      const side=Math.random()<.5?'home':'away';lm[side==='home'?'penaltiesH':'penaltiesA']++;robustAddEvent(`${side==='home'?H.name:A.name}: 2 Minuten Strafzeit.`,'penalty');
+    }else if(roll<0.72){
+      robustAddEvent('ICING · Bully in der eigenen Zone.','normal');
+    }else if(roll<0.80){
+      robustAddEvent('ABSEITS · Angriff wird abgepfiffen.','normal');
+    }else if(roll<0.91){
+      robustAddEvent('BULLY · Puck neu im Spiel.','normal');
+    }else{
+      robustAddEvent('POWERPLAY · Überzahlspiel entsteht.','normal');
+    }
+    const skew=((hs-as)/100)*5+(Math.random()-0.5)*8;lm.possession=clamp(50+skew,28,72);lm.nextEventMs=lm.clockMs+2200+Math.random()*4200;
+  }
+
+  function robustMoveRink(){
+    const lm=state.liveMatch;if(!lm)return;const t=Date.now()/700;const puck=$('#rPuck');
+    const x=50+Math.sin(t)*28+Math.sin(t*1.7)*9;const y=50+Math.cos(t*1.4)*24;
+    if(puck){puck.style.left=`${x}%`;puck.style.top=`${y}%`;puck.classList.toggle('pulse',Math.sin(t*4)>0.7);}
+    ['home','away'].forEach((side,si)=>{for(let i=0;i<6;i++){const e=$(`[data-hskater="${side}-${i}"]`);if(!e)continue;const baseX=side==='home'?30:70;const drift=side==='home'?1:-1;const xx=clamp(baseX+drift*((i%3)*9-9)+Math.sin(t+(i*.8))*7,7,93);const yy=clamp(22+(i*10)+Math.cos(t*1.2+i)*8,10,90);e.style.left=`${xx}%`;e.style.top=`${yy}%`;}});
+  }
+
+  function robustPeriodState(ms){
+    if(ms<ROBUST_PERIOD_MS)return {phase:'first',period:1,periodClock:ms};
+    if(ms<ROBUST_PERIOD_MS+ROBUST_BREAK_MS)return {phase:'break1',period:1,periodClock:ROBUST_PERIOD_MS};
+    if(ms<ROBUST_PERIOD_MS*2+ROBUST_BREAK_MS)return {phase:'second',period:2,periodClock:ms-(ROBUST_PERIOD_MS+ROBUST_BREAK_MS)};
+    if(ms<ROBUST_PERIOD_MS*2+ROBUST_BREAK_MS*2)return {phase:'break2',period:2,periodClock:ROBUST_PERIOD_MS};
+    if(ms<ROBUST_TOTAL_MS)return {phase:'third',period:3,periodClock:ms-(ROBUST_PERIOD_MS*2+ROBUST_BREAK_MS*2)};
+    return {phase:'end',period:3,periodClock:ROBUST_PERIOD_MS};
+  }
+
+  function updateRobustLiveDOM(){
+    const lm=state.liveMatch;if(!lm)return;const s=robustPeriodState(lm.clockMs);const total=ROBUST_PERIOD_MS*3;
+    const clock=Math.min(s.periodClock,ROBUST_PERIOD_MS);
+    const time=$('#rClock'),score=$('#rScore'),period=$('#rPeriod'),remain=$('#rRemain'),bar=$('#rBar'),shots=$('#rShots'),saves=$('#rSaves'),pen=$('#rPen'),poss=$('#rPoss');
+    if(time)time.textContent=robustClockText(clock); if(score)score.textContent=`${lm.hg} : ${lm.ag}`; if(period)period.textContent=s.phase==='break1'||s.phase==='break2'?`${s.period}. DRITTEL · PAUSE`:`${s.period}. DRITTEL`; if(remain)remain.textContent=robustClockText(total-Math.min(lm.clockMs,total)); if(bar)bar.style.width=`${Math.min(100,(lm.clockMs/ROBUST_TOTAL_MS)*100)}%`;
+    if(shots)shots.textContent=`${lm.shotsH} : ${lm.shotsA}`;if(saves)saves.textContent=`${lm.savesH} : ${lm.savesA}`;if(pen)pen.textContent=`${lm.penaltiesH} : ${lm.penaltiesA}`;if(poss)poss.textContent=`${Math.round(lm.possession)}% : ${100-Math.round(lm.possession)}%`;
+    const br=$('#rBreak');if(br){const visible=s.phase==='break1'||s.phase==='break2';br.classList.toggle('show',visible);if(visible){const bt=$('#rBreakTitle'),bx=$('#rBreakText');if(bt)bt.textContent=`${s.period}. DRITTEL ENDE`;if(bx)bx.textContent=`${s.period===1?'1.':'2.'} Pause · Gleich startet das ${s.period+1}. Drittel.`;}}
+    robustMoveRink();
+  }
+
+  function tickRobustHockeyLive(){
+    const lm=state.liveMatch;if(!lm||lm.engine!=='robust-v6'||lm.ended)return;
+    const now=Date.now();
+    const delta=Math.max(0,Math.min(1000,now-lm.lastTick));lm.lastTick=now;lm.clockMs+=delta;
+    const st=robustPeriodState(lm.clockMs);lm.phase=st.phase;lm.period=st.period;
+    if(lm.clockMs>=lm.nextEventMs && st.phase!=='break1' && st.phase!=='break2') robustGenerateEvent(now);
+    if(st.phase==='break1' && !lm._break1){lm._break1=true;robustAddEvent(`1. DRITTEL ENDE · ${lm.hg}:${lm.ag}`,'normal');}
+    if(st.phase==='break2' && !lm._break2){lm._break2=true;robustAddEvent(`2. DRITTEL ENDE · ${lm.hg}:${lm.ag}`,'normal');}
+    updateRobustLiveDOM();
+    if(lm.clockMs>=ROBUST_TOTAL_MS){finishRobustHockeyLive();}
+  }
+
+  function finishRobustHockeyLive(){
+    const lm=state.liveMatch;if(!lm||lm.ended)return;lm.ended=true;
+    if(window.__robustLiveTimer){clearInterval(window.__robustLiveTimer);window.__robustLiveTimer=null;}
+    const game=findGame(lm.gameId,lm.type);const weather=lm.weather||pick(WEATHER);
+    try{
+      if(game && !game.played) applyFinalResult(game,lm.hg,lm.ag,weather,lm.type,lm.shotsH,lm.shotsA);
+    }catch(err){
+      console.error('V6 Abpfiff:',err);
+      try{
+        if(game&&!game.played&&lm.type==='league'){const f=leagueForGame(game);if(f)applyResultForLeague(game,lm.hg,lm.ag,weather,f.id);}
+        else if(game&&!game.played){game.played=true;game.result={hg:lm.hg,ag:lm.ag,weather:weather.name};}
+      }catch(_){ }
+    }
+    state.lastMatch={home:lm.home,away:lm.away,hg:lm.hg,ag:lm.ag,weather:weather.name,type:lm.type,date:Date.now()};
+    state.liveMatch=null;state.matchdayBrief=[];saveState();render();
+    openModal('ABPFIFF',`<div class="fulltime-card"><div class="fulltime-score"><strong>${esc(state.teams[lm.home]?.name||'HEIM')}</strong><b>${lm.hg} : ${lm.ag}</b><strong>${esc(state.teams[lm.away]?.name||'GAST')}</strong></div><p>3. Drittel beendet. Das Ergebnis wurde gespeichert und die Tabelle aktualisiert.</p><button class="gold-btn wide" data-close>WEITER</button></div>`,{kicker:'ENDSTAND · WORLD CUP 27'});
   }
 
   function startLiveMatch(game,type){
